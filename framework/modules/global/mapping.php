@@ -1,8 +1,6 @@
 <?php 
 
-$moduleMapping = (object) array('default' => array(
-	'page' => 'default',
-	'acl' => 'anyone',
-	'context' => 'page',
-	)
+$moduleMapping = (object) array(
+	'default' => new GFCommonMapping(),
+	'login' => new GFCommonMapping('login')
 );

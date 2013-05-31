@@ -14,6 +14,7 @@ include 'mapping.php';
 // Début de la tamporisation de sortie
 ob_start();
 
+try {
 
 if(!empty($_GET['module'])) {
     $module = $_GET['module'];
@@ -36,7 +37,18 @@ if(!empty($_GET['action'])) {
     }
 }
 
+GFCommonAuth::checkAcl($action_def->acl);
+
+
 include SERVER_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
+
+} catch(GFExceptionMinor $e) {
+    // Minor error
+    include SERVER_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
+    include SERVER_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
+} catch(GFExceptionMajor $e) {
+    // Major error
+}
 
 $content = ob_get_clean();
  
