@@ -11,57 +11,80 @@ include 'mapping.php';
  they also indicate the headers parameter, and if the view need html header & footers
 */
  
-// Début de la tamporisation de sortie
-ob_start();
+function loadAction($query_module, $query_action) {
 
-try {
+    // Global variables
+    include(SERVER_ROOT . '/global/common.globalvar.php');
 
-if(!empty($_GET['module'])) {
-    $module = $_GET['module'];
-    if(ctype_alpha($module)) {
-        if(array_key_exists($module, $globalMapping)) {
-            $include_module = $globalMapping[$module];
+    // Début de la tamporisation de sortie
+    ob_start();
+
+    try {
+
+        if(!empty($query_module)) {
+            $module = $query_module;
+            if(ctype_alpha($module)) {
+                if(array_key_exists($module, $globalMapping)) {
+                    $include_module = $globalMapping[$module];
+                }
+            }
         }
-    }
-}
 
-include SERVER_ROOT . '/modules/' . $include_module . '/mapping.php';
+        include SERVER_ROOT . '/modules/' . $include_module . '/mapping.php';
 
-if(!empty($_GET['action'])) {
-    $action = $_GET['action'];
-    if(ctype_alpha($action)) {
-        if(array_key_exists($action, $moduleMapping)) {
-            $action_def = $moduleMapping[$action];
-            $include_action = $action_def->page;          
+        if(!empty($query_action)) {
+            $action = $query_action;
+            if(ctype_alpha($action)) {
+                if(array_key_exists($action, $moduleMapping[$include_module])) {
+                    $action_def = $moduleMapping[$include_module]->$action;
+                    $include_action = $action_def->page;          
+                }
+            }
         }
+
+        GFCommonAuth::checkAcl($action_def->acl);
+
+
+        include SERVER_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
+
+    } catch(GFExceptionMinor $e) {
+        // Minor error
+        include SERVER_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
+        include SERVER_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
+    } catch(GFExceptionMajor $e) {
+        // Major error
     }
+
+    $content = ob_get_clean();
+     
+    foreach ($headers as $head) {
+        header($head);
+    }
+
+    if($action_def->context == 'page') {
+        include 'view/header.php';
+    }
+     
+    echo $content;
+     
+    if($action_def->context == 'page') {
+        include 'view/footer.php';
+    }    
+
 }
 
-GFCommonAuth::checkAcl($action_def->acl);
+$mod = "";
+$act = "";
 
-
-include SERVER_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
-
-} catch(GFExceptionMinor $e) {
-    // Minor error
-    include SERVER_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
-    include SERVER_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
-} catch(GFExceptionMajor $e) {
-    // Major error
+if(isset($_GET['module'])) 
+{
+    $mod = $_GET['module'];
 }
 
-$content = ob_get_clean();
- 
-foreach ($headers as $head) {
-    header($head);
+if(isset($_GET['action'])) 
+{
+    $act = $_GET['action'];
 }
 
-if($action_def->context == 'page') {
-    include 'view/header.php';
-}
- 
-echo $content;
- 
-if($action_def->context == 'page') {
-    include 'view/footer.php';
-}
+loadAction($mod, $act);
+

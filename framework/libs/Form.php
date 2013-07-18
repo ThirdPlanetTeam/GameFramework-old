@@ -317,6 +317,7 @@ abstract class Form_Field {
 	protected $form;
 	protected $required;
 	protected $label;
+	protected $placeholder;
 	protected $value;
 	protected $class;
 	protected $attrs;
@@ -327,12 +328,13 @@ abstract class Form_Field {
 
 	public function __construct($name, $form) {
 
-		$this->form     = $form;
-		$this->required = true;
-		$this->label    = '';
-		$this->value    = '';
-		$this->class    = array();
-		$this->attrs    = new AttributeList;
+		$this->form     	= $form;
+		$this->required 	= true;
+		$this->label    	= '';
+		$this->placeholder	= '';
+		$this->value    	= '';
+		$this->class    	= array();
+		$this->attrs    	= new AttributeList;
 		$this->attrs['name'] = $name;
 		$this->error_messages= new ErrorList;
 		$this->custom_error_messages = array();
