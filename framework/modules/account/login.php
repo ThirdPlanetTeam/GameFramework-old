@@ -5,7 +5,8 @@ $login_form = new Form('login_form', 'POST');
 $login_form->action('index.php?module=global&action=login');
 
 $login_form->add('Text', 'username')
-         ->label($i18n->getText('login','username'));
+         ->label($i18n->getText('login','username'))
+         ->placeholder('username');
 
 $login_form->add('Password', 'password')
          ->label($i18n->getText('login','password'));   

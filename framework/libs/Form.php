@@ -384,6 +384,11 @@ abstract class Form_Field {
 		return $this;
 	}
 
+	public function placeholder($text) {
+		$this->placeholder = $text;
+		return $this;
+	}
+
 	public function value($text) {
 
 		$this->value = $text;
@@ -568,6 +573,16 @@ class Form_Text extends Form_Input {
 			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
+		if (!empty($this->placeholder)) {
+
+			$this->attrs['placeholder'] = $this->placeholder;
+		}
+
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}		
+
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
@@ -607,10 +622,26 @@ class Form_Hidden extends Form_Input {
 // ---------------------------------------------------------------------------
 class Form_Password extends Form_Text {
 
+	// use Stanford Javascript Crypto Library
+	protected $jscrypt;
+
+
 	public function __construct($name, $form) {
 
 		parent::__construct($name, $form);
 		$this->attrs['type'] = 'password';
+	}
+
+	public function jscrypt($crypt,$param = null) {
+		if (false === $crypt) { 
+			//$this->attrs['autocomplete'] = 'off'; 
+			$this->autocomplete = null; 
+		}
+		else { 
+			//unset($this->attrs['autocomplete']); 
+			//$this->autocomplete = true; 
+		}
+		return $this;
 	}
 
 	public function __toString() {
@@ -626,6 +657,16 @@ class Form_Password extends Form_Text {
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
 			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
+
+		if (!empty($this->placeholder)) {
+
+			$this->attrs['placeholder'] = $this->placeholder;
+		}
+
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}			
 
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
@@ -838,6 +879,16 @@ class Form_File extends Form_Input {
 			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
+		if (!empty($this->placeholder)) {
+
+			$this->attrs['placeholder'] = $this->placeholder;
+		}
+
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}			
+
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
@@ -929,6 +980,11 @@ class Form_Radio extends Form_Input {
 		$value = $this->form->get_bounded_data($this->attrs['name']);
 		$value = (!empty($value)) ? $value : $this->value;
 
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}	
+
 		$j = 0;
 		$fields = array();
 		foreach($this->choices as $v => $c) {
@@ -1014,6 +1070,11 @@ class Form_Select extends Form_Input {
 		$value = $this->form->get_bounded_data($this->attrs['name']);
 		$value = (!empty($value)) ? $value : $this->value;
 
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}	
+
 		$j = 0;
 		$fields = array();
 		foreach($this->choices as $v => $c) {
@@ -1085,6 +1146,12 @@ class Form_Checkbox extends Form_Input {
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
 			$label = "\n$tab".'<label'.$for.'>'.$this->label.'</label>';
 		}
+
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}	
+
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
@@ -1131,6 +1198,12 @@ class Form_Textarea extends Form_Field {
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
 			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
+
+		if ($this->required) {
+
+			$this->attrs['required'] = "required";
+		}	
+
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
 		$value = $this->form->get_bounded_data($this->attrs['name']);

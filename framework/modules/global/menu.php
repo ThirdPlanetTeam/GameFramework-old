@@ -37,11 +37,13 @@ function printFullMenu(Array $menu) {
 	echo '<div id="menu">';
 
 	foreach($menu as $section => $submenu) {
-		echo "<h3>$section</h3><div><ul>";
-		foreach ($submenu as $menu_action => $menu_name) {
-			echo "<li><a href='?module=$section&action=$menu_action'>$menu_name</a></li>";
+		if(count($submenu) > 0) {
+			echo "<h3>$section</h3><div><ul>";
+			foreach ($submenu as $menu_action => $menu_name) {
+				echo "<li><a href='?module=$section&action=$menu_action'>$menu_name</a></li>";
+			}
+			echo '</ul></div>';
 		}
-		echo '</ul></div>';
 	}
 	echo '</div>';
 }

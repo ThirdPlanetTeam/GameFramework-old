@@ -1,3 +1,6 @@
 <?php
 
-$globalMapping = array('global' => 'global');
+$globalMapping = array(
+	'global' => 'global',
+	'account' => 'account'
+	);
