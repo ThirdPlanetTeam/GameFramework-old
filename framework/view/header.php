@@ -7,6 +7,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
+        <?php GFCommonJavascript::renderHeader(); ?>
         <link rel="stylesheet" href="css/style.css">
 
     </head>

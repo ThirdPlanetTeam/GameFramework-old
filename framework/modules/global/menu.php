@@ -25,6 +25,16 @@ foreach($globalMapping as $module_name => $module) {
 
 function printFullMenu(Array $menu) {
 
+	GFCommonJavascript::AddScript('lib/jquery', GFCommonJavascript::ScopeCore);
+	GFCommonJavascript::AddScript('lib/jquery-ui', GFCommonJavascript::ScopeLib);
+	GFCommonJavascript::AddStyle('jquery-ui');
+
+	GFCommonJavascript::AddScript('<script>
+	  $(function() {
+	    $( "#menu" ).accordion();
+	  });
+  </script>', GFCommonJavascript::ScopeInline);
+
 	/*echo '<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>

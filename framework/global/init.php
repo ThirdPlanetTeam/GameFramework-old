@@ -8,6 +8,7 @@ require_once('common.auth.php');
 require_once('common.error.php');
 require_once('common.security.php');
 require_once('common.mapping.php');
+require_once('common.javascript.php');
 
 define("SERVER_ROOT", substr(__DIR__, 0, -7));
 define("DEFAULT_MODULE", 'global');

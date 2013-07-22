@@ -2,14 +2,15 @@
 
 $login_form = new Form('login_form', 'POST');
 
-$login_form->action('index.php?module=global&action=login');
+$login_form->action('index.php?module=account&action=login');
 
 $login_form->add('Text', 'username')
          ->label($i18n->getText('login','username'))
          ->placeholder('username');
 
 $login_form->add('Password', 'password')
-         ->label($i18n->getText('login','password'));   
+         ->label($i18n->getText('login','password'))
+         ->jscrypt('sha1', 'salt1'); 
 
 $login_form->add('Hidden', 'source_module')
 		 ->value($query_module);  
@@ -33,6 +34,28 @@ if ($login_form->is_valid($_POST)) {
 	    }
 
 } else {
+
+	GFCommonJavascript::AddScript('lib/jquery', GFCommonJavascript::ScopeCore);
+	GFCommonJavascript::AddScript('lib/sha', GFCommonJavascript::ScopeScript);
+
+	GFCommonJavascript::AddScript('<script>
+	  $(function() {
+	    $( "#login_form" ).on("submit", function() {
+	    	$(".jscrypt").each(function() {
+	    		var hash;
+	    		var input = $(this).attr("for");
+	    		var pass= $("#"+input).val();
+	    		var salt = $(this).data("salt");
+
+	    		hash = Sha1.hash(salt + pass);
+
+	    		$("#"+input).attr("value", "");
+	    		$(this).val(hash);
+
+	    	});
+	    });
+	  });
+  </script>', GFCommonJavascript::ScopeInline);
 
 	echo $login_form;
 

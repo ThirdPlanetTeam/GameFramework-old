@@ -53,7 +53,7 @@ class Form {
 			foreach($this->fields as $name => $f) {
 
 				$values[$name] = (isset($values[$name])) ? $values[$name] : null;
-				$valid = $f->is_valid($values[$name]) && $valid;
+				$valid = $f->is_valid($values[$name], $values) && $valid;
 			}
 
 			if ($valid) {
@@ -242,7 +242,7 @@ class Form {
 
 		$tab = func_num_args() > 0 ? func_get_arg(0) : '';
 		
-		$o = $tab.'<form'.$this->attrs.'>'."\n";
+		$o = $tab.'<form'.$this->attrs.' id="'.$this->uniqid.'">'."\n";
 
 		if (empty($this->fieldsets)) {
 
@@ -354,7 +354,7 @@ abstract class Form_Field {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
 		$value = $this->get_cleaned_value($value);
 
@@ -624,6 +624,7 @@ class Form_Password extends Form_Text {
 
 	// use Stanford Javascript Crypto Library
 	protected $jscrypt;
+	protected $jscrypt_option;
 
 
 	public function __construct($name, $form) {
@@ -635,13 +636,27 @@ class Form_Password extends Form_Text {
 	public function jscrypt($crypt,$param = null) {
 		if (false === $crypt) { 
 			//$this->attrs['autocomplete'] = 'off'; 
-			$this->autocomplete = null; 
+			$this->jscrypt = null; 
+			$this->jscrypt_option = null; 
 		}
 		else { 
 			//unset($this->attrs['autocomplete']); 
 			//$this->autocomplete = true; 
+			$this->jscrypt = $crypt; 
+			$this->jscrypt_option = $param; 
 		}
 		return $this;
+	}
+
+	public function is_valid($value, $values) {
+
+		if (!parent::is_valid($value, $values)) {
+			if(!empty($values['jscrypt_'.$this->attrs['name']])) {
+				return true;
+			}
+			return false;
+		}
+		return true;
 	}
 
 	public function __toString() {
@@ -658,6 +673,19 @@ class Form_Password extends Form_Text {
 			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
+		$crypt = '';
+		if (!empty($this->jscrypt)) {
+
+			$algo = 'sha1';
+
+			if(!empty($this->jscrypt_option)) {
+				$algo = $this->jscrypt_option;
+			}
+
+			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
+			$crypt = '<input id="jscrypt_id_'.$this->attrs['name'].'" class="jscrypt" type="hidden" data-algo="'.$this->jscrypt.'" data-salt="'.$algo.'" '.$for.'></input>'."\n$tab";
+		}		
+
 		if (!empty($this->placeholder)) {
 
 			$this->attrs['placeholder'] = $this->placeholder;
@@ -672,7 +700,7 @@ class Form_Password extends Form_Text {
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
 		$field = '<input'.$id.$this->attrs.' />';
-		return $tab.sprintf("%2\$s%1\$s%3\$s", $field, $label, $errors);
+		return $tab.sprintf("%2\$s%1\$s%4\$s%3\$s", $field, $label, $errors, $crypt);
 	}
 }
 
@@ -687,9 +715,9 @@ class Form_Email extends Form_Text {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
-		if (parent::is_valid($value)) {
+		if (parent::is_valid($value, $values)) {
 
 			if (0 < preg_match('`^[[:alnum:]]([-_.]?[[:alnum:]])*@[[:alnum:]]([-.]?[[:alnum:]])*\.([a-z]{2,4})$`', $value)) {
 
@@ -725,9 +753,9 @@ class Form_Date extends Form_Text {
 		return $this;
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
-		if (parent::is_valid($value)) {
+		if (parent::is_valid($value, $values)) {
 
 			$from = array('dd', 'mm', 'yyyy', 'yy', 'HH', 'MM', 'SS');
 			$to   = array('%d', '%m',  '%Y',  '%y', '%H', '%M', '%S');
@@ -800,7 +828,7 @@ class Form_File extends Form_Input {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
 		$name = $this->attrs['name'];
 
@@ -808,7 +836,7 @@ class Form_File extends Form_Input {
 
 			$value = isset($_FILES[$name]) ? $_FILES[$name]['name'] : null;
 
-			if (parent::is_valid($value)) {
+			if (parent::is_valid($value, $values)) {
 
 				if (!$this->required) {
 
@@ -953,9 +981,9 @@ class Form_Radio extends Form_Input {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
-		if (parent::is_valid($value)) {
+		if (parent::is_valid($value, $values)) {
 
 			if ($this->required && !in_array($value, $this->choices)) {
 
@@ -1038,9 +1066,9 @@ class Form_Select extends Form_Input {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
-		if (parent::is_valid($value)) {
+		if (parent::is_valid($value, $values)) {
 
 			if ($this->required && !in_array($value, $this->choices)) {
 
@@ -1119,9 +1147,9 @@ class Form_Checkbox extends Form_Input {
 		}
 	}
 
-	public function is_valid($value) {
+	public function is_valid($value, $values) {
 
-		if (parent::is_valid($value)) {
+		if (parent::is_valid($value, $values)) {
 
 			if ($this->required && !empty($this->value) && $value != $this->value) {
 

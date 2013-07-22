@@ -25,7 +25,7 @@ class GFCommonAuth {
 					return false;
 				} else {
 					$e = new GFExceptionMinor("Login needed", 1);
-					$e->refirectModule = MODULE_ACCOUNT;
+					$e->redirectModule = MODULE_ACCOUNT;
 					$e->redirectAction = ACTION_LOGIN;
 					throw $e;
 				}
@@ -38,7 +38,7 @@ class GFCommonAuth {
 					return false;
 				} else {				
 					$e = new GFExceptionMinor("Proceed to logout", 1);
-					$e->refirectModule = MODULE_ACCOUNT;
+					$e->redirectModule = MODULE_ACCOUNT;
 					$e->redirectAction = ACTION_LOGOUT;
 					throw $e;
 				}
