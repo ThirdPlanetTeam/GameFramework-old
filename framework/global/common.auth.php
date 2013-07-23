@@ -22,7 +22,7 @@ class GFCommonAuth {
 		if($acl >= GFCommonAuth::Registered) {
 			if(!isset($_SESSION['token'])) {
 				if($safe) {
-					return false;
+					//return false;
 				} else {
 					$e = new GFExceptionMinor("Login needed", 1);
 					$e->redirectModule = MODULE_ACCOUNT;

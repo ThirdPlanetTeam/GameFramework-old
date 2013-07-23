@@ -62,7 +62,7 @@ class Form {
 
 				foreach($this->fields as $name => $f) {
 
-					$this->cleaned_data[$f->get_name()] = $f->get_cleaned_value($values[$name]);
+					$this->cleaned_data[$f->get_name()] = $f->get_cleaned_value($values[$name], $values);
 				}
 			}
 			return $valid;
@@ -242,7 +242,7 @@ class Form {
 
 		$tab = func_num_args() > 0 ? func_get_arg(0) : '';
 		
-		$o = $tab.'<form'.$this->attrs.' id="'.$this->uniqid.'">'."\n";
+		$o = $tab.'<form'.$this->attrs.' id="'.$this->uniqid.'" class="form_class">'."\n";
 
 		if (empty($this->fieldsets)) {
 
@@ -356,7 +356,7 @@ abstract class Form_Field {
 
 	public function is_valid($value, $values) {
 
-		$value = $this->get_cleaned_value($value);
+		$value = $this->get_cleaned_value($value, $values);
 
 		$valid = true;
 
@@ -439,7 +439,7 @@ abstract class Form_Field {
 		return $this->attrs['name'];
 	}
 
-	public function get_cleaned_value($value) {
+	public function get_cleaned_value($value, $values) {
 
 		return $value;
 	}
@@ -525,10 +525,10 @@ abstract class Form_Input extends Form_Field {
 		$this->attrs['type'] = 'text';
 	}
 
-	public function get_cleaned_value($value) {
+	public function get_cleaned_value($value, $values) {
 
 		$value = trim($value);
-		return parent::get_cleaned_value($value);
+		return parent::get_cleaned_value($value, $values);
 	}
 
 	// abstract public function __toString($tab = '');
@@ -554,9 +554,9 @@ class Form_Text extends Form_Input {
 
 	}
 
-	public function get_cleaned_value($value) {
+	public function get_cleaned_value($value, $values) {
 
-		return parent::get_cleaned_value(preg_replace('`[\x00-\x19]`i', '', $value));
+		return parent::get_cleaned_value(preg_replace('`[\x00-\x19]`i', '', $value), $values);
 	}
 
 	public function __toString() {
@@ -659,6 +659,14 @@ class Form_Password extends Form_Text {
 		return true;
 	}
 
+	public function get_cleaned_value($value, $values) {
+		if (!empty($this->jscrypt)) {
+			$value = $values['jscrypt_'.$this->attrs['name']];
+		}
+
+		return parent::get_cleaned_value($value, $values);
+	}
+
 	public function __toString() {
 
 		$tab = func_num_args() > 0 ? func_get_arg(0) : '';
@@ -683,7 +691,7 @@ class Form_Password extends Form_Text {
 			}
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$crypt = '<input id="jscrypt_id_'.$this->attrs['name'].'" class="jscrypt" type="hidden" data-algo="'.$this->jscrypt.'" data-salt="'.$algo.'" '.$for.'></input>'."\n$tab";
+			$crypt = "\n$tab".'<input name="jscrypt_'.$this->attrs['name'].'" class="jscrypt" type="hidden" data-algo="'.$this->jscrypt.'" data-salt="'.$algo.'" data-source="id_'.$this->attrs['name'].'">';
 		}		
 
 		if (!empty($this->placeholder)) {
@@ -865,7 +873,7 @@ class Form_File extends Form_Input {
 		return false;
 	}
 
-	public function get_cleaned_value($value) {
+	public function get_cleaned_value($value, $values) {
 
 		return isset($_FILES[$this->attrs['name']]) ? $_FILES[$this->attrs['name']]['tmp_name'] : null;
 	}
@@ -1201,7 +1209,7 @@ class Form_Textarea extends Form_Field {
 		return $this;
 	}
 
-	public function get_cleaned_value($value) {
+	public function get_cleaned_value($value, $values) {
 
 		return preg_replace('`[\x00\x08-\x0b\x0c\x0e\x19]`i', '', $value);
 	}

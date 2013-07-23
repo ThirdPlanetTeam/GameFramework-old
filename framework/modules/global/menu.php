@@ -16,7 +16,16 @@ foreach($globalMapping as $module_name => $module) {
 
 	foreach ($moduleMapping[$module] as $action_name => $action) {
 
-		if($action->inMenu != false && GFCommonAuth::checkAcl($action->acl, true)) {
+		$aclOk = GFCommonAuth::checkAcl($action->acl, true);
+
+		//if($aclOk)
+		echo '<br>'.$action_name;
+		var_dump($aclOk);
+		if($aclOk == true && $action_name == 'logout') {
+			$aclOk = false;
+		}
+
+		if($action->inMenu != false && $aclOk) {
 			$sub_menu[$action_name] = $action->inMenu;
 			$full_menu[$module_name][$action_name] = $action->inMenu;
 		}
@@ -27,7 +36,7 @@ function printFullMenu(Array $menu) {
 
 	GFCommonJavascript::AddScript('lib/jquery', GFCommonJavascript::ScopeCore);
 	GFCommonJavascript::AddScript('lib/jquery-ui', GFCommonJavascript::ScopeLib);
-	GFCommonJavascript::AddStyle('jquery-ui');
+	GFCommonJavascript::AddStyle('lib/jquery-ui');
 
 	GFCommonJavascript::AddScript('<script>
 	  $(function() {
