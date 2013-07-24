@@ -18,9 +18,6 @@ foreach($globalMapping as $module_name => $module) {
 
 		$aclOk = GFCommonAuth::checkAcl($action->acl, true);
 
-		//if($aclOk)
-		echo '<br>'.$action_name;
-		var_dump($aclOk);
 		if($aclOk == true && $action_name == 'logout') {
 			$aclOk = false;
 		}

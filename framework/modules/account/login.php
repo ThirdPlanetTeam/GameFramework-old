@@ -3,7 +3,7 @@
 
 $login_form = new Form('login_form', 'POST');
 
-$login_form->action('index.php?module=account&action=login');
+$login_form->action(GFCommon::formatLink('account', 'login'));
 
 $login_form->add('Text', 'username')
          ->label($i18n->getText('login','username'))
@@ -11,7 +11,7 @@ $login_form->add('Text', 'username')
 
 $login_form->add('Password', 'password')
          ->label($i18n->getText('login','password'))
-         ->jscrypt('sha1', 'salt1'); 
+         ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
 
 $login_form->add('Hidden', 'source_module')
 		 ->value($query_module);  
@@ -35,10 +35,11 @@ if ($login_form->is_valid($_POST)) {
 	    $user = $model->getUserInfo($username);
 
 	    if($user != false) {
-		    $salt = md5($user[$model::FIELD_DATECREATION]);
+		    $salt = $user[$model::FIELD_SALT];
 
 		    //$hash = explode('$', crypt($user[$model::FIELD_HASH], '$6$rounds=5000$'.$salt.'$'))[4];
-		    $hash = explode('$', crypt($password, '$6$rounds=5000$'.$salt.'$'))[4];
+		    //$hash = explode('$', crypt($password, '$6$rounds=5000$'.$salt.'$'))[4];
+		    $hash = GFCommonAuth::getSha512($password, $salt);
 
 		    if($hash == $user[$model::FIELD_HASH]) {
 		    	GFCommonAuth::registerUser($username);
@@ -49,18 +50,11 @@ if ($login_form->is_valid($_POST)) {
 	    }
 
 	    if($source_module != 'global' || ($source_module == 'global' && $source_action != 'login' && $source_action != 'logout')) {
-	    	header("Location: ?module=$source_module&action=$source_action");
+	    	header("Location: ".GFCommon::formatLink($source_module, $source_action));
 	    } else {
 	    	header("Location: .");
 	    }
 
-} else {
-
-	GFCommonJavascript::AddScript('lib/jquery', GFCommonJavascript::ScopeCore);
-	GFCommonJavascript::AddScript('lib/sha', GFCommonJavascript::ScopeScript);
-
-	GFCommonJavascript::AddScript('form', GFCommonJavascript::ScopeScript);
-
-	echo $login_form;
-
 }
+
+include SERVER_ROOT . '/view/account/login.php';

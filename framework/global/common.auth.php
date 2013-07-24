@@ -11,6 +11,8 @@ class GFCommonAuth {
 	const Registered = 1;
 	const Admin = 2;
 
+	const BrowserSalt = 'b9704fe8c16809f48ccedb818654e41e';
+
 
 
 	public static function checkAcl($acl, $safe = false) {
@@ -70,5 +72,9 @@ class GFCommonAuth {
 		if(isset($_SESSION['token'])) {
 			unset($_SESSION['token']);
 		}
+	}
+
+	public static function getSha512($pwd, $salt) {
+		return explode('$', crypt($pwd, '$6$rounds=5000$'.$salt.'$'))[4];
 	}
 }

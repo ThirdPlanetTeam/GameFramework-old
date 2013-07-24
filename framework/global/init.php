@@ -4,6 +4,7 @@ session_start();
 
 date_default_timezone_set('Europe/Zurich');
 
+require_once('common.php');
 require_once('common.auth.php');
 require_once('common.error.php');
 require_once('common.security.php');
