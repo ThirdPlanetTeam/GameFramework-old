@@ -18,8 +18,10 @@ foreach($globalMapping as $module_name => $module) {
 
 		$aclOk = GFCommonAuth::checkAcl($action->acl, true);
 
-		if($aclOk == true && $action_name == 'logout') {
-			$aclOk = false;
+		if(!is_int($action->inMenu)) {
+			if($action->acl == GFCommonAuth::Registered) {
+				$aclOk = true;
+			}
 		}
 
 		if($action->inMenu != false && $aclOk) {
@@ -31,32 +33,19 @@ foreach($globalMapping as $module_name => $module) {
 
 function printFullMenu(Array $menu) {
 
-	GFCommonJavascript::AddScript('lib/jquery', GFCommonJavascript::ScopeCore);
-	GFCommonJavascript::AddScript('lib/jquery-ui', GFCommonJavascript::ScopeLib);
-	GFCommonJavascript::AddStyle('lib/jquery-ui');
+	global $i18n;
 
-	GFCommonJavascript::AddScript('<script>
-	  $(function() {
-	    $( "#menu" ).accordion();
-	  });
-  </script>', GFCommonJavascript::ScopeInline);
+	GFCommonJavascript::addScript('jqueryui');
 
-	/*echo '<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-   <script>
-	  $(function() {
-	    $( "#menu" ).accordion();
-	  });
-  </script>';*/
+	GFCommonJavascript::addCallback('$( "#menu" ).accordion();');
 
 	echo '<div id="menu">';
 
 	foreach($menu as $section => $submenu) {
 		if(count($submenu) > 0) {
-			echo "<h3>$section</h3><div><ul>";
+			echo "<h3>".$i18n->getText('menu','section '.$section)."</h3><div><ul>";
 			foreach ($submenu as $menu_action => $menu_name) {
-				echo "<li><a href='?module=$section&action=$menu_action'>$menu_name</a></li>";
+				echo "<li><a href='?module=$section&action=$menu_action'>".$i18n->getText('menu',$section . ' ' . $menu_action)."</a></li>";
 			}
 			echo '</ul></div>';
 		}

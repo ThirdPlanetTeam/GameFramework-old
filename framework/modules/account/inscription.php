@@ -5,47 +5,50 @@ $form_inscription = new Form('form_inscription', 'POST');
 $form_inscription->action(GFCommon::formatLink('account', 'inscription'));
  
 $form_inscription->add('Text', 'username')
-                 ->label("Votre nom d'utilisateur");
+                 ->label($i18n->getText('account','username'))
+                 ->placeholder($i18n->getText('account','username placeholder'));
  
 $form_inscription->add('Password', 'password')
-                 ->label("Votre mot de passe")
+                 ->label($i18n->getText('account','password'))
                  ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
  
 $form_inscription->add('Password', 'password_verif')
-                 ->label("Votre mot de passe (vérification)")
+                 ->label($i18n->getText('account','password again'))
                  ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
  
 $form_inscription->add('Email', 'email')
-                 ->label("Votre adresse email"); 
+                 ->label($i18n->getText('account','email'))
+                 ->placeholder($i18n->getText('account','email placeholder')); 
 
 $form_inscription->add('Email', 'email_verif')
-                 ->label("Votre adresse email (vérification)");                  
+                 ->label($i18n->getText('account','email again'))
+                 ->placeholder($i18n->getText('account','email placeholder'));                  
  
  
 $form_inscription->add('Submit', 'submit')
-                 ->value("Je veux m'inscrire !");
+                 ->value($i18n->getText('account','submit inscription'));
  
 // Pré-remplissage avec les valeurs précédemment entrées (s'il y en a)
 $form_inscription->bound($_POST);
 
-$erreurs_inscription = array();
+$inscription_errors = array();
 
 if ($form_inscription->is_valid($_POST)) {
  
     // On vérifie si les 2 mots de passe correspondent
     if ($form_inscription->get_cleaned_data('password') != $form_inscription->get_cleaned_data('password_verif')) {
  
-        $erreurs_inscription[] = "Les deux mots de passes entrés sont différents !";
+        $inscription_errors[] = "passwords diff";
     }
 
     // On vérifie si les 2 adresses emails correspondent
     if ($form_inscription->get_cleaned_data('email') != $form_inscription->get_cleaned_data('email_verif')) {
  
-        $erreurs_inscription[] = "Les deux adresses emails  entrés sont différentes !";
+        $inscription_errors[] = "emails diff";
     }   
 
     // Si d'autres erreurs ne sont pas survenues
-    if (empty($erreurs_inscription)) {
+    if (empty($inscription_errors)) {
  
         $model = Modeles::getModel('account', 'account');
 
@@ -55,13 +58,17 @@ if ($form_inscription->is_valid($_POST)) {
 
     	if($exists != false) {
     		foreach ($exists as $value) {
-    			if($exists[$model::FIELD_USERNAME] == $username) {
-    				$erreurs_inscription['username'] = "Le nom d'utilisateur $username est déjà utilisé";
+
+                //var_dump($exists);
+
+    			if($value[$model::FIELD_USERNAME] == $username) {
+    				$inscription_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));
     			}
 
-    			if($exists[$model::FIELD_EMAIL] == $email) {
-    				$erreurs_inscription['email'] = "L'adresse email $email est déjà utilisé";
-    			}    			
+    			if($value[$model::FIELD_EMAIL] == $email) {
+    				$inscription_errors['email'] = array('id' => 'existant email', 'params' => array('email' => $email));
+    			} 
+                $inscription_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));		
     		}
     	} else {
     		$hash_validation = md5(uniqid(rand(), true));

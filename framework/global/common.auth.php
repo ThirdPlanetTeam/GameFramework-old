@@ -24,7 +24,7 @@ class GFCommonAuth {
 		if($acl >= GFCommonAuth::Registered) {
 			if(!isset($_SESSION['token'])) {
 				if($safe) {
-					//return false;
+					return false;
 				} else {
 					$e = new GFExceptionMinor("Login needed", 1);
 					$e->redirectModule = MODULE_ACCOUNT;
@@ -61,6 +61,7 @@ class GFCommonAuth {
 	public static function registerUser($username, int $acl = null) {
 		$_SESSION['token'] = [];
 
+		$_SESSION['token']['id'] = md5(uniqid(rand(), true));
 		$_SESSION['token']['username'] = $username;
 
 		if(!is_null($acl) && $acl >= GFCommonAuth::Admin) {

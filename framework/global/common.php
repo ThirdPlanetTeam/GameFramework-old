@@ -1,19 +1,27 @@
 <?php
 
-
-
 class GFCommon {
 
 	const URL_REWRITE = false;
 
-	public static function formatLink($module, $action, $querystring = '') {
+	public static function formatLink($module, $action, array $querystring = null) {
+
+		if(is_null($querystring)) {
+			$querystring = array();
+		}
+
+		if(isset($_SESSION['token']['id'])) {
+			$querystring[] = 'token=' . $_SESSION['token']['id'];
+		}
+
+
 		if(GFCommon::URL_REWRITE) {
-			return $module.'/'.$action.'/?'.$querystring;
+			return $module.'/'.$action.'/?'.implode('&',$querystring);
 		} else {
-			if($querystring != '') {
-				$querystring = '&'.$querystring;
+			if(count($querystring) > 0) {
+				$action .= '&';
 			}
-			return '?module='.$module.'&action='.$action.$querystring;
+			return '?module='.$module.'&action='.$action.implode('&',$querystring);
 		}
 	}
 }
