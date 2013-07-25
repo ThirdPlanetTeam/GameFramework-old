@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 $login_form = new Form('login_form', 'POST');
 
 $login_errors = array();

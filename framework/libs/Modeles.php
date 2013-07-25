@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 require_once(SERVER_ROOT . '/modeles/config.php');
 
 class Modeles {

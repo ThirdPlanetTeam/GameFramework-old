@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 class GFCommonJavascript {
 
     private static $_jsfiles = array();
@@ -75,7 +81,7 @@ class GFCommonJavascript {
     }    
 
     public static function renderAjax() {
-        
+
     }
 
 

@@ -1,4 +1,10 @@
-<?php 
+<?php
+
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
 
 $moduleMapping['account'] = (object) array(
 	'login' => new GFCommonMapping(['page' => 'login', 'menu' => true, 'acl' => GFCommonAuth::Unregistered]),

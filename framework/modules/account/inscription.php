@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 $form_inscription = new Form('form_inscription', 'POST');
  
 $form_inscription->action(GFCommon::formatLink('account', 'inscription'));

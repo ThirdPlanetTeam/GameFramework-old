@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 define('LANG_DIR', SERVER_ROOT . '/i18n/');
 define('LANG_FALLBACK', 'en'); // Lang when requested lang doesn't exists
 
