@@ -3,21 +3,17 @@
 class GFCommonJavascript {
 
     private static $_jsfiles = array();
+    private static $_jscallback = array();
     private static $_cssfiles = array();
-
-    const ScopeCore = 1;
-    const ScopeLib = 2;
-    const ScopeScript = 3;
-    const ScopeInline = 4;
 
     private static $_glueJS = "<script type='text/javascript' src='js/%s.js'></script>";
     private static $_glueCSS = "<link rel='stylesheet' href='css/%s.css'></link>";
  
 
-    public static function addScript($filename, $scope)
+    public static function addScript($filename, $amd = true)
     {
-    	if (!isset(self::$_jsfiles[$filename])) {
-			self::$_jsfiles[$filename] = ['scope' => $scope, 'file' => $filename ];
+    	if (!isset(self::$_jsfiles[$filename])){
+			self::$_jsfiles[$filename] = $filename;
 		}
     }
 
@@ -26,25 +22,21 @@ class GFCommonJavascript {
     	if (!in_array($filename, self::$_cssfiles)){
 			self::$_cssfiles[] = $filename;
 		}
-    }    
+    }  
 
-    private static function prepare()
+    public static function addCallback($callback)
     {
 
-		$call = array();
+        $id = md5($callback);
 
-    	foreach (self::$_jsfiles as $file) {
-    		$k = $file['scope'];
-    		$call[$k][] = $file['file'];
-    	}    	
+        if (!isset(self::$_jscallback[$id])){
+            self::$_jscallback[$id] = $callback;
+        }
+    }          
 
-    	return $call;
-    }
-
-    public static function renderHeader()
+    public static function renderCss()
     {
-    	$call = GFCommonJavascript::prepare();
-    	
+   	
     	$css = self::$_cssfiles;
 
 
@@ -54,44 +46,37 @@ class GFCommonJavascript {
 
 		echo implode($css);
 
-    	if(isset($call[GFCommonJavascript::ScopeCore])) {
-    		$call = $call[GFCommonJavascript::ScopeCore];
-
-	    	array_walk($call, function (&$item, $key) {
-	    		$item = sprintf(self::$_glueJS, $item);
-			});
-			echo implode($call);
-    	}
-
-
-		
-
-
     }
 
-    public static function renderFooter()
+    public static function renderJavascript()
     {
-    	$call = GFCommonJavascript::prepare();
-	
-    	unset($call[GFCommonJavascript::ScopeCore]);
 
+        $args = array();
 
+        echo "<script type='text/javascript'>" . PHP_EOL . PHP_EOL
+            . "curl(['";
+        echo implode("','",self::$_jsfiles);  
 
-    	foreach($call as $scope => $files) {
+        foreach (self::$_jsfiles as $file) {
+            $args[] = preg_replace('/[^a-z]/i', '', $file);
+        }              
+        echo "','domReady!']," .PHP_EOL;
 
-    		if($scope < GFCommonJavascript::ScopeInline) {
+        echo 'function (';
+        echo  implode(', ', $args);
 
-		    	array_walk($files, function (&$item, $key) {
-		    		$item = sprintf(self::$_glueJS, $item);
-				});
-		    }
+        echo ') { ' . PHP_EOL;
 
-			echo implode($files);
+        echo implode(PHP_EOL, self::$_jscallback);  
 
-    	}
+        echo PHP_EOL . '});'. PHP_EOL .'</script>' . PHP_EOL;
 
 
     }    
+
+    public static function renderAjax() {
+        
+    }
 
 
 }

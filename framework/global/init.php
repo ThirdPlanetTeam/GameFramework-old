@@ -4,6 +4,8 @@ session_start();
 
 date_default_timezone_set('Europe/Zurich');
 
+header('X-UA-Compatible: IE=edge,chrome=1');
+
 require_once('common.php');
 require_once('common.auth.php');
 require_once('common.error.php');

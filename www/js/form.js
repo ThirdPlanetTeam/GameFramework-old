@@ -1,4 +1,5 @@
-$(function() {
+define(['js!lib/sha', 'jquery'], function() {
+	
 	$( ".form_class" ).on("submit", function() {
 		$(".jscrypt").each(function() {
 			var hash,

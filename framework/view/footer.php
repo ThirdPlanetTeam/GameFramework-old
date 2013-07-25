@@ -1,3 +1,3 @@
-<?php GFCommonJavascript::renderFooter(); ?>
+<?php GFCommonJavascript::renderJavascript(); ?>
     </body>
 </html>

@@ -69,7 +69,9 @@ function loadAction($query_module, $query_action) {
      
     if($action_def->context == 'page') {
         include 'view/footer.php';
-    }    
+    } else {
+        //echo GFCommonJavascript::renderAjax();
+    }   
 
 }
 
