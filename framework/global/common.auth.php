@@ -1,5 +1,11 @@
 <?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
 define("MODULE_ACCOUNT", "account");
 define("ACTION_LOGIN", "login");
 define("ACTION_LOGOUT", "logout");

@@ -1,3 +1,9 @@
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+ 
 define(['js!lib/sha', 'jquery'], function() {
 	
 	$( ".form_class" ).on("submit", function() {

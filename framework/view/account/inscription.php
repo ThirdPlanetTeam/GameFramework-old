@@ -1,3 +1,12 @@
+<?php
+
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
+?>
 <h2><?php echo $i18n->getText('account','inscription title'); ?></h2>
  
 <?php

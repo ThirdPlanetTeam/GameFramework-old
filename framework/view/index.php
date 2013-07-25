@@ -1,4 +1,12 @@
+<?php
 
+/**********************************
+ * PHP Game Framework             *
+ * Published under MIT License    *
+ * Copyright (c) 2013 Léo Maradan *
+ **********************************/
+
+?>
 		<header>
 			<h1>Header</h1>
 		</header>
