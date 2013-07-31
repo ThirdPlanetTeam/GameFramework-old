@@ -6,32 +6,34 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-$login_form = new Form('login_form', 'POST');
+$account_form = new Form('account_form', 'POST');
 
-$login_errors = array();
+$account_form->add_bootstrap(INPUT_SIZE, LABEL_SIZE);
 
-$login_form->action(GFCommon::formatLink('account', 'login'));
+$account_form->action(GFCommon::formatLink('account', 'login'));
 
-$login_form->add('Text', 'username')
+$account_form->add('Text', 'username')
          ->label($i18n->getText('account','username'))
          ->placeholder($i18n->getText('account','username placeholder'));
 
-$login_form->add('Password', 'password')
+$account_form->add('Password', 'password')
          ->label($i18n->getText('account','password'))
          ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
 
-$login_form->add('Hidden', 'source_module')
+$account_form->add('Hidden', 'source_module')
 		 ->value($query_module);  
 
-$login_form->add('Hidden', 'source_action')
+$account_form->add('Hidden', 'source_action')
 		 ->value($query_action);    		   
 
-$login_form->add('Submit', $i18n->getText('account','submit login')); 
+$account_form->add('Submit', $i18n->getText('account','submit login')); 
 
-$login_form->bound($_POST);
+$account_form->bound($_POST);
 
-if ($login_form->is_valid($_POST)) {
-	    $list = $login_form->get_cleaned_data('username', 'password', 'source_module', 'source_action');
+$account_errors = array();
+
+if ($account_form->is_valid($_POST)) {
+	    $list = $account_form->get_cleaned_data('username', 'password', 'source_module', 'source_action');
 
 	    $model = Modeles::getModel('account', 'account');
 
@@ -45,7 +47,13 @@ if ($login_form->is_valid($_POST)) {
 
 		    $hash = GFCommonAuth::getSha512($password, $salt);
 
-		    var_dump($hash);
+		    $need_activation = $user[$model::FIELD_VALIDATION] != null;
+
+		   	if($need_activation) {
+		   		$location = "Location: ".GFCommon::formatLink('account', 'active', array('source_module='.$source_module, 'source_action='.$source_action));
+		   		header($location);
+		   		exit;
+		   	}
 
 		    if($hash == $user[$model::FIELD_HASH]) {
 		    	GFCommonAuth::registerUser($username);
@@ -57,12 +65,14 @@ if ($login_form->is_valid($_POST)) {
 			    }
 
 		    } else {
-		    	$login_errors[] = 'bad password';
+		    	$account_errors[] = 'bad password';
 		    }
 
 	    } else {
-	    	$login_errors[] = 'bad username';
+	    	$account_errors[] = 'bad username';
 	    }
 }
 
-include SERVER_ROOT . '/view/account/login.php';
+$page_title = 'login title';
+
+include SERVER_ROOT . '/view/account/form.php';

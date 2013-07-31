@@ -34,6 +34,12 @@ class AccountModel extends Modeles {
 		return $result;		
 	}
 
+	public function validateUser($username) {
+		$usr = $this->pdo->quote($username, PDO::PARAM_STR);
+
+		$this->pdo->exec("UPDATE " . AccountModel::TABLE_NAME . " SET ".AccountModel::FIELD_VALIDATION." = NULL WHERE ".AccountModel::FIELD_USERNAME." LIKE $usr LIMIT 1");
+	}
+
 	public function registerUser($username, $hash, $salt, $email, $validation) {
 		
 		$query = 'INSERT INTO ' . AccountModel::TABLE_NAME . ' (

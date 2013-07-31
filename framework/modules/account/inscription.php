@@ -6,59 +6,61 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-$form_inscription = new Form('form_inscription', 'POST');
+$account_form = new Form('form_inscription', 'POST');
+
+$account_form->add_bootstrap(INPUT_SIZE, LABEL_SIZE);
+
+$account_form->action(GFCommon::formatLink('account', 'inscription'));
  
-$form_inscription->action(GFCommon::formatLink('account', 'inscription'));
- 
-$form_inscription->add('Text', 'username')
+$account_form->add('Text', 'username')
                  ->label($i18n->getText('account','username'))
                  ->placeholder($i18n->getText('account','username placeholder'));
  
-$form_inscription->add('Password', 'password')
+$account_form->add('Password', 'password')
                  ->label($i18n->getText('account','password'))
                  ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
  
-$form_inscription->add('Password', 'password_verif')
+$account_form->add('Password', 'password_verif')
                  ->label($i18n->getText('account','password again'))
                  ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
  
-$form_inscription->add('Email', 'email')
+$account_form->add('Email', 'email')
                  ->label($i18n->getText('account','email'))
                  ->placeholder($i18n->getText('account','email placeholder')); 
 
-$form_inscription->add('Email', 'email_verif')
+$account_form->add('Email', 'email_verif')
                  ->label($i18n->getText('account','email again'))
                  ->placeholder($i18n->getText('account','email placeholder'));                  
  
  
-$form_inscription->add('Submit', 'submit')
+$account_form->add('Submit', 'submit')
                  ->value($i18n->getText('account','submit inscription'));
  
 // Pré-remplissage avec les valeurs précédemment entrées (s'il y en a)
-$form_inscription->bound($_POST);
+$account_form->bound($_POST);
 
-$inscription_errors = array();
+$account_errors = array();
 
-if ($form_inscription->is_valid($_POST)) {
+if ($account_form->is_valid($_POST)) {
  
     // On vérifie si les 2 mots de passe correspondent
-    if ($form_inscription->get_cleaned_data('password') != $form_inscription->get_cleaned_data('password_verif')) {
+    if ($account_form->get_cleaned_data('password') != $account_form->get_cleaned_data('password_verif')) {
  
-        $inscription_errors[] = "passwords diff";
+        $account_errors[] = "passwords diff";
     }
 
     // On vérifie si les 2 adresses emails correspondent
-    if ($form_inscription->get_cleaned_data('email') != $form_inscription->get_cleaned_data('email_verif')) {
+    if ($account_form->get_cleaned_data('email') != $account_form->get_cleaned_data('email_verif')) {
  
-        $inscription_errors[] = "emails diff";
+        $account_errors[] = "emails diff";
     }   
 
     // Si d'autres erreurs ne sont pas survenues
-    if (empty($inscription_errors)) {
+    if (empty($account_errors)) {
  
         $model = Modeles::getModel('account', 'account');
 
-		list($username, $password, $email) = $form_inscription->get_cleaned_data('username', 'password', 'email');        
+		list($username, $password, $email) = $account_form->get_cleaned_data('username', 'password', 'email');        
 
     	$exists = $model->checkRegister($username, $email);
 
@@ -68,13 +70,13 @@ if ($form_inscription->is_valid($_POST)) {
                 //var_dump($exists);
 
     			if($value[$model::FIELD_USERNAME] == $username) {
-    				$inscription_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));
+    				$account_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));
     			}
 
     			if($value[$model::FIELD_EMAIL] == $email) {
-    				$inscription_errors['email'] = array('id' => 'existant email', 'params' => array('email' => $email));
+    				$account_errors['email'] = array('id' => 'existant email', 'params' => array('email' => $email));
     			} 
-                $inscription_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));		
+                $account_errors['username'] = array('id' => 'existant username', 'params' => array('username' => $username));		
     		}
     	} else {
     		$hash_validation = md5(uniqid(rand(), true));
@@ -82,11 +84,13 @@ if ($form_inscription->is_valid($_POST)) {
 
         	$model->registerUser($username, GFCommonAuth::getSha512($password, $salt), $salt, $email, $hash_validation);
 
-        	header("Location: ".GFCommon::formatLink('account', 'accountmanage'));
+        	header("Location: ".GFCommon::formatLink('account', 'default'));
     	}
 
     }
  
 }
 
-include SERVER_ROOT . '/view/account/inscription.php';
+$page_title = 'inscription title';
+
+include SERVER_ROOT . '/view/account/form.php';

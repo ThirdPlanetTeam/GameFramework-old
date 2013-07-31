@@ -38,6 +38,12 @@ function loadAction($query_module, $query_action) {
 
         include SERVER_ROOT . '/modules/' . $include_module . '/mapping.php';
 
+        if(array_key_exists('default', $moduleMapping[$include_module])) {
+
+            $action_def = $moduleMapping[$include_module]->default;
+            $include_action = $action_def->page;   
+        }
+
         if(!empty($query_action)) {
             $action = $query_action;
             if(ctype_alpha($action)) {
