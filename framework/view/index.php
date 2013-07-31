@@ -8,7 +8,7 @@
 
 ?>
 		<header>
-			<h1>Header</h1>
+			<h1>Framework</h1>
 		</header>
 	
 		<section id="main" role="main">

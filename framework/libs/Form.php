@@ -14,6 +14,7 @@ class Form {
 	protected $label_suffix;
 	protected $bounded_data;
 	protected $cleaned_data;
+	protected $htmlclass;
 	protected $attrs;
 	protected $uniqid;
 
@@ -22,15 +23,18 @@ class Form {
 	public function __construct($uniqid, $method = 'get') {
 
 		$this->fields= array();
-		$this->hidden_fields = array();
-		$this->submit_fields = array();
-		$this->fieldsets     = array();
-		$this->errors        = array();
-		$this->auto_id       = 'id_%s';
-		$this->label_suffix  = ' :';
-		$this->bounded_data  = array();
-		$this->cleaned_data  = array();
-		$this->attrs         = new AttributeList(array('method' => $method));
+		$this->hidden_fields 	= array();
+		$this->submit_fields 	= array();
+		$this->fieldsets     	= array();
+		$this->errors        	= array();
+		$this->auto_id       	= 'id_%s';
+		$this->label_suffix  	= ' :';
+		$this->bootstrap_class	= null;
+		$this->label_class 	 	= null;
+		$this->bounded_data  	= array();
+		$this->cleaned_data  	= array();
+		$this->htmlclass	 	= array('form_class');
+		$this->attrs         	= new AttributeList(array('method' => $method));
 
 		if (false !== $uniqid && in_array($uniqid, self::$instances)) {
 
@@ -108,6 +112,21 @@ class Form {
 	public function label_suffix() {
 
 		return $this->label_suffix;
+	}
+
+	public function bootstrap_class($no_offset = true) {
+		if(!$no_offset) {
+			return 'col-offset-'. $this->label_class .' col-lg-' . $this->bootstrap_class;
+		} else {
+			return 'col-lg-' . $this->bootstrap_class;
+		}
+		
+	}
+
+	public function label_class() {
+		if($this->label_class != null) {
+			return ' class="col-lg-'.$this->label_class.' control-label" ';
+		}
 	}
 
 	public function auto_id() {
@@ -238,11 +257,30 @@ class Form {
 		return null;
 	}
 
+	public function add_class($class) {
+
+		if (!in_array($class, $this->htmlclass)) { $this->htmlclass[] = $class; }
+		return $this;
+	}
+
+	public function add_bootstrap($bootstrap_size, $label_size = null)	 {
+		//$form_inscription->add_class('form-horizontal');
+		if($label_size != null) {
+			$this->add_class('form-horizontal');
+
+			$this->label_class = $label_size;
+		}
+
+		$this->bootstrap_class = $bootstrap_size;
+	}
+
 	public function __toString() {
 
 		$tab = func_num_args() > 0 ? func_get_arg(0) : '';
+
+		$htmlclass = implode(" ", $this->htmlclass);
 		
-		$o = $tab.'<form'.$this->attrs.' id="'.$this->uniqid.'" class="form_class">'."\n";
+		$o = $tab.'<form'.$this->attrs.' id="'.$this->uniqid.'" class="'.$htmlclass.'">'."\n";
 
 		if (empty($this->fieldsets)) {
 
@@ -279,7 +317,7 @@ class Form {
 
 			if (empty($filter) || in_array($f->get_name(), $filter)) {
 
-				$o .= "$tab<p>\n".$f->__toString($tab."\t")."\n$tab</p>\n";
+				$o .= "$tab<div class='form-group'>\n".$f->__toString($tab."\t")."\n$tab</div>\n";
 			}
 		}
 		return $o;
@@ -333,7 +371,7 @@ abstract class Form_Field {
 		$this->label    	= '';
 		$this->placeholder	= '';
 		$this->value    	= '';
-		$this->class    	= array();
+		$this->class    	= array('form-control');
 		$this->attrs    	= new AttributeList;
 		$this->attrs['name'] = $name;
 		$this->error_messages= new ErrorList;
@@ -494,6 +532,18 @@ abstract class Form_Field {
 		return array('', '');
 	}
 
+	static protected function _label_class($classes) {
+		if(!is_array($classes)) {
+			$classes = array($classes);
+		}
+
+		if(count($classes > 0)) {
+			return ' class="'.implode(" ", $classes).'" ';
+		}
+
+		return '';
+	}
+
 	protected function _generate_class() {
 
 		if (!empty($this->class)) {
@@ -570,7 +620,8 @@ class Form_Text extends Form_Input {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
+			$labelclass = $this->form->label_class();
+			$label = '<label'.$for.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
 		if (!empty($this->placeholder)) {
@@ -581,7 +632,7 @@ class Form_Text extends Form_Input {
 		if ($this->required) {
 
 			$this->attrs['required'] = "required";
-		}		
+		}	
 
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
@@ -597,7 +648,13 @@ class Form_Text extends Form_Input {
 			$value = '';
 		}
 
+
 		$field = '<input'.$id.$this->attrs.$value.' />';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+		
 		return $tab.sprintf("%2\$s%1\$s%3\$s", $field, $label, $errors);
 	}
 }
@@ -661,7 +718,12 @@ class Form_Password extends Form_Text {
 
 	public function get_cleaned_value($value, $values) {
 		if (!empty($this->jscrypt)) {
-			$value = $values['jscrypt_'.$this->attrs['name']];
+			if(!empty($values['jscrypt_'.$this->attrs['name']])) {
+				$value = $values['jscrypt_'.$this->attrs['name']];
+			} else {
+				$value = sha1($this->jscrypt_option . $value);
+			}
+			
 		}
 
 		return parent::get_cleaned_value($value, $values);
@@ -678,7 +740,8 @@ class Form_Password extends Form_Text {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
+			$labelclass = $this->form->label_class();
+			$label = '<label'.$for.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
 		$crypt = '';
@@ -708,6 +771,11 @@ class Form_Password extends Form_Text {
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
 		$field = '<input'.$id.$this->attrs.' />';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%1\$s%4\$s%3\$s", $field, $label, $errors, $crypt);
 	}
 }
@@ -912,7 +980,8 @@ class Form_File extends Form_Input {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
+			$labelclass = $this->form->label_class();
+			$label = '<label'.$for.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
 		if (!empty($this->placeholder)) {
@@ -929,6 +998,11 @@ class Form_File extends Form_Input {
 		if (!empty($errors)) { $errors = "\n".$errors; }
 
 		$field = '<input'.$id.$this->attrs.' />';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%1\$s%3\$s", $field, $label, $errors);
 	}
 }
@@ -949,11 +1023,18 @@ class Form_Submit extends Form_Input {
 
 		$this->_generate_class();
 
+		$labelclass = $this->form->label_class();
+
 		// Pas d'auto_id pour les champs Submit...
-		$label = (!empty($this->label)) ? '<label>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab" : '';
+		$label = (!empty($this->label)) ? '<label '.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab" : '';
 		$value = empty($this->value) ? '' : ' value="'.$this->value.'"';
 
 		$field = '<input'.$this->attrs.$value.' />';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%1\$s", $field, $label);
 	}
 }
@@ -1010,7 +1091,9 @@ class Form_Radio extends Form_Input {
 		$this->_generate_class();
 
 		$i = $this->form->auto_id();
-		$span = (!empty($this->label)) ? '<span>'.$this->label.$this->form->label_suffix().'<br /></span>' : '';
+		$labelclass = $this->form->label_class();
+
+		$span = (!empty($this->label)) ? '<span '.$labelclass.'>'.$this->label.$this->form->label_suffix().'<br /></span>' : '';
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
 		$value = $this->form->get_bounded_data($this->attrs['name']);
@@ -1023,12 +1106,13 @@ class Form_Radio extends Form_Input {
 
 		$j = 0;
 		$fields = array();
+		$haslabel = false;
 		foreach($this->choices as $v => $c) {
 
 			$id = '';
 			$label = '';
 			if (!empty($i)) {
-
+				$haslabel = true;
 				list($for, $id) = self::_generate_for_id($this->form->auto_id().'_'.(++$j), $this->attrs['name']);
 				$label = '<label'.$for.'>'.$c.'</label>';
 			}
@@ -1039,6 +1123,11 @@ class Form_Radio extends Form_Input {
 
 		}
 		$field = "\n$tab".implode("\n$tab", $fields);
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class($haslabel).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%3\$s%1\$s", $field, $span, $errors);
 	}
 }
@@ -1099,7 +1188,8 @@ class Form_Select extends Form_Input {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
+			$labelclass = $this->form->label_class();
+			$label = '<label'.$for.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 		$errors = $this->error_messages->__toString($tab);
 		if (!empty($errors)) { $errors = "\n".$errors; }
@@ -1134,6 +1224,11 @@ class Form_Select extends Form_Input {
 		}
 
 		$field = '<select'.$id.$this->attrs.'>'."\n".implode("\n", $fields)."\n$tab</select>";
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%1\$s%3\$s", $field, $label, $errors);
 	}
 }
@@ -1180,7 +1275,8 @@ class Form_Checkbox extends Form_Input {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = "\n$tab".'<label'.$for.'>'.$this->label.'</label>';
+			$labelclass = $this->form->label_class();
+			$label = "\n$tab".'<label'.$for.$labelclass.'>'.$this->label.'</label>';
 		}
 
 		if ($this->required) {
@@ -1195,6 +1291,11 @@ class Form_Checkbox extends Form_Input {
 		$checked = ($this->value == $this->form->get_bounded_data($this->attrs['name'])) ? ' checked="checked"' : '';
 
 		$field = '<input'.$id.$this->attrs.$value.$checked.' />';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%1\$s%2\$s%3\$s", $field, $label, $errors);
 	}
 }
@@ -1232,7 +1333,8 @@ class Form_Textarea extends Form_Field {
 		if (!empty($this->label)) {
 
 			list($for, $id) = self::_generate_for_id($this->form->auto_id(), $this->attrs['name']);
-			$label = '<label'.$for.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
+			$labelclass = $this->form->label_class();
+			$label = '<label'.$for.$labelclass.'>'.$this->label.$this->form->label_suffix().'</label>'."\n$tab";
 		}
 
 		if ($this->required) {
@@ -1246,6 +1348,11 @@ class Form_Textarea extends Form_Field {
 		$value = (!empty($value)) ? htmlspecialchars($value) : htmlspecialchars($this->value);
 
 		$field = '<textarea'.$id.$this->attrs.'>'.$value.'</textarea>';
+
+		if($this->form->bootstrap_class() != null) {
+			$field = '<div class="'.$this->form->bootstrap_class(!empty($this->label)).'">'.$field.'</div>';
+		}
+
 		return $tab.sprintf("%2\$s%1\$s%3\$s", $field, $label, $errors);
 	}
 }

@@ -40,7 +40,10 @@ $moduleMapping = array();
 $globalMapping = array();
 $headers = array();
 
-
+// Initialize js and css bases
+GFCommonJavascript::addScript('jquery');
+GFCommonJavascript::addScript('main');
+GFCommonJavascript::addStyle('lib/bootstrap');
 
 $display_headers = true;
 

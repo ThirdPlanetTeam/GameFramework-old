@@ -41,20 +41,25 @@ function printFullMenu(Array $menu) {
 
 	global $i18n;
 
-	GFCommonJavascript::addScript('jqueryui');
+	//GFCommonJavascript::addCallback('$( "#menu" ).dropdown();');
 
-	GFCommonJavascript::addCallback('$( "#menu" ).accordion();');
+	echo '<div id="menu" class="navbar navbar-static">
+	<a class="navbar-brand" href="#">Menu</a>
+	<div class="nav-collapse collapse bs-js-navbar-collapse">
+	<ul class="nav navbar-nav" role="navigation">';
 
-	echo '<div id="menu">';
+
+	//echo '<div id="menu" class="dropdown">' . PHP_EOL;
 
 	foreach($menu as $section => $submenu) {
 		if(count($submenu) > 0) {
-			echo "<h3>".$i18n->getText('menu','section '.$section)."</h3><div><ul>";
+			echo "<li class='dropdown'><a href='#' class='dropdown-toggle'  id='menu-".$section."' role='button' data-toggle='dropdown' >".$i18n->getText('menu','section '.$section)."</a>
+			<ul class='dropdown-menu' role='menu' aria-labelledby='menu-".$section."'>" . PHP_EOL;
 			foreach ($submenu as $menu_action => $menu_name) {
-				echo "<li><a href='?module=$section&action=$menu_action'>".$i18n->getText('menu',$section . ' ' . $menu_action)."</a></li>";
+				echo "<li><a href='?module=$section&action=$menu_action'>".$i18n->getText('menu',$section . ' ' . $menu_action)."</a></li>" . PHP_EOL;
 			}
-			echo '</ul></div>';
+			echo '</ul></li>';
 		}
 	}
-	echo '</div>';
+	echo '</ul></div></div>';
 }
