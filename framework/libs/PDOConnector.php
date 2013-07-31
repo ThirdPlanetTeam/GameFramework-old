@@ -26,7 +26,9 @@ class PDOConnector extends PDO {
              
             } catch (PDOException $e) {
              
-                echo $e;
+                //echo $e;
+                echo "Database error";
+                die();
             }
         }
         return self::$_instance;

@@ -82,6 +82,29 @@ if ($account_form->is_valid($_POST)) {
     		$hash_validation = md5(uniqid(rand(), true));
         	$salt = md5(uniqid(rand(), true));
 
+            $mail = new \api\tools\Mail();
+            
+            $mail->Subject .= 'Code de validation de votre compte';
+
+            
+            $mail->AddTo($email, $username);
+                        
+            $mail->ParseTitle = "Game Framework";          
+            $mail->ParseCorps = "<table width='100%' height='200px'>
+                                <tr>
+                                    <td align='center'>
+                                    Votre compte $username est bien enregistré<br />
+                                    il ne vous reste plus qu'à le valider<br />
+                                    code de validation: $hash_validation<br>
+                                    </td>
+                                </tr>
+                    </table>";
+                    
+            $mail->Parse();
+
+            $mail->Send();  
+
+
         	$model->registerUser($username, GFCommonAuth::getSha512($password, $salt), $salt, $email, $hash_validation);
 
         	header("Location: ".GFCommon::formatLink('account', 'default'));
@@ -93,4 +116,4 @@ if ($account_form->is_valid($_POST)) {
 
 $page_title = 'inscription title';
 
-include SERVER_ROOT . '/view/account/form.php';
+include FRAMEWORK_ROOT . '/view/account/form.php';

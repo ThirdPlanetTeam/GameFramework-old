@@ -19,15 +19,34 @@ require_once('common.security.php');
 require_once('common.mapping.php');
 require_once('common.javascript.php');
 
-define("SERVER_ROOT", substr(__DIR__, 0, -7));
+define("SERVER_ROOT", substr(__DIR__, 0, -17));
+define("FRAMEWORK_ROOT", SERVER_ROOT . '/framework');
 define("DEFAULT_MODULE", 'global');
 define("DEFAULT_ACTION", 'default');
 
-include(SERVER_ROOT . '/global/common.globalvar.php');
+include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
+
 
 spl_autoload_register(function ($class) {
-    include SERVER_ROOT . '/libs/' . $class . '.php';
+
+	$framework = FRAMEWORK_ROOT . '/libs/' . $class . '.php';
+	if (file_exists($framework)) {
+    	include $framework;
+    	return;
+	}
+
+    $api = SERVER_ROOT . '/' . strtr($class, '\\', '//') . '.php';
+    if (file_exists($api)) {
+        include($api);
+        return;
+	}	
+
+	var_dump($framework);
+	var_dump($api);
+	exit;
 });
+
+
 
 
 $lang = i18n::getLangCode();
@@ -41,7 +60,6 @@ $globalMapping = array();
 $headers = array();
 
 // Initialize js and css bases
-GFCommonJavascript::addScript('jquery');
 GFCommonJavascript::addScript('main');
 GFCommonJavascript::addStyle('lib/bootstrap');
 

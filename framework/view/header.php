@@ -22,7 +22,8 @@
                 paths: {    
                     "jquery": "lib/jquery.js",
                     "css": "lib/curl/css.js",
-                    "css!": "../css/"
+                    "css!": "../css/",
+                    "bootstrap": "lib/bootstrap.js"
                 }
             }
         </script>

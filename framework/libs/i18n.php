@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-define('LANG_DIR', SERVER_ROOT . '/i18n/');
+define('LANG_DIR', FRAMEWORK_ROOT . '/i18n/');
 define('LANG_FALLBACK', 'en'); // Lang when requested lang doesn't exists
 
 class i18n {

@@ -75,4 +75,4 @@ if ($account_form->is_valid($_POST)) {
 
 $page_title = 'login title';
 
-include SERVER_ROOT . '/view/account/form.php';
+include FRAMEWORK_ROOT . '/view/account/form.php';

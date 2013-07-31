@@ -15,7 +15,7 @@ if(isset($_SESSION['token'])) {
 }
 
 foreach($globalMapping as $module_name => $module) {
-	include SERVER_ROOT . '/modules/' . $module . '/mapping.php';
+	include FRAMEWORK_ROOT . '/modules/' . $module . '/mapping.php';
 
 	$full_menu[$module_name] = [];
 	$global_menu[] = $module_name;

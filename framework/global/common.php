@@ -22,7 +22,7 @@ class GFCommon {
 
 
 		if(GFCommon::URL_REWRITE) {
-			return $module.'/'.$action.'/?'.implode('&',$querystring);
+			return $module.'/'.$action.'.html?'.implode('&',$querystring);
 		} else {
 			if(count($querystring) > 0) {
 				$action .= '&';
@@ -30,4 +30,5 @@ class GFCommon {
 			return '?module='.$module.'&action='.$action.implode('&',$querystring);
 		}
 	}
+
 }

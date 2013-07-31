@@ -60,11 +60,18 @@ class GFCommonJavascript {
         $args = array();
 
         echo "<script type='text/javascript'>" . PHP_EOL . PHP_EOL
-            . "curl(['";
+            . "curl([
+                'js!lib/jquery.js!order',
+                'js!lib/bootstrap.js!order',
+                '";
         echo implode("','",self::$_jsfiles);  
 
         foreach (self::$_jsfiles as $file) {
-            $args[] = preg_replace('/[^a-z]/i', '', $file);
+            if($file == 'jquery') {
+                $args[] = '$';
+            } else {
+                $args[] = preg_replace('/[^a-z]/i', '', $file);
+            }
         }              
         echo "','domReady!']," .PHP_EOL;
 

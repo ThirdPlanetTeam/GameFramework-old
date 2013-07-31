@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-require_once(SERVER_ROOT . '/modeles/config.php');
+require_once(FRAMEWORK_ROOT . '/modeles/config.php');
 
 class Modeles {
     public $pdo;
@@ -15,9 +15,13 @@ class Modeles {
         $this->pdo = PDOConnector::getInstance();
     }
 
+    public function __destruct() {
+        $this->pdo = null;
+    }
+
     public static function getModel($package, $name) {
     	$classname = ucfirst($name).'Model';
-    	include SERVER_ROOT.'/modeles/'.$package.'/'.$name.'.php';
+    	include FRAMEWORK_ROOT.'/modeles/'.$package.'/'.$name.'.php';
     	return new $classname();
     }
 

@@ -20,7 +20,7 @@ include 'mapping.php';
 function loadAction($query_module, $query_action) {
 
     // Global variables
-    include(SERVER_ROOT . '/global/common.globalvar.php');
+    include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
 
     // Début de la tamporisation de sortie
     ob_start();
@@ -36,7 +36,7 @@ function loadAction($query_module, $query_action) {
             }
         }
 
-        include SERVER_ROOT . '/modules/' . $include_module . '/mapping.php';
+        include FRAMEWORK_ROOT . '/modules/' . $include_module . '/mapping.php';
 
         if(array_key_exists('default', $moduleMapping[$include_module])) {
 
@@ -57,12 +57,12 @@ function loadAction($query_module, $query_action) {
         GFCommonAuth::checkAcl($action_def->acl);
 
 
-        include SERVER_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
+        include FRAMEWORK_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
 
     } catch(GFExceptionMinor $e) {
         // Minor error
-        include SERVER_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
-        include SERVER_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
+        include FRAMEWORK_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
+        include FRAMEWORK_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
     } catch(GFExceptionMajor $e) {
         // Major error
     }

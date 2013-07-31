@@ -20,3 +20,9 @@ class GFExceptionMajor extends GFException {
 	
 }
 
+function exception_handler($e)
+{
+    echo 'Unknown error';
+}
+ 
+set_exception_handler('exception_handler');
