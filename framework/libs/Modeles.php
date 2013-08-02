@@ -6,10 +6,10 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-require_once(FRAMEWORK_ROOT . '/modeles/config.php');
-
 class Modeles {
     public $pdo;
+
+    public static $nb_query = 0;
 
     public function __construct() {
         $this->pdo = PDOConnector::getInstance();

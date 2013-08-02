@@ -4,7 +4,7 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
  
-define(['js!lib/sha', 'jquery'], function() {
+define(['js!lib/sha'], function() {
 	
 	$( ".form_class" ).on("submit", function() {
 		$(".jscrypt").each(function() {

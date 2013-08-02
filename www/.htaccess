@@ -1,2 +1,4 @@
-RewriteEngine On
-RewriteRule ^([^/]*)/([^/]*)\.html$ /?module=$1&action=$2 [L]
+RewriteEngine on
+RewriteRule ^([a-z0-9]+)/([a-z0-9]+)\.html$ index.php?module=$1&action=$2 [NC,L]
+RewriteRule ^([a-z0-9]+)\.html$ index.php?module=global&action=$1 [NC,L]
+RewriteRule ^([a-z0-9]+)/$ index.php?module=$1&action=default [NC,L]

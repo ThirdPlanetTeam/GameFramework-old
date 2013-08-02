@@ -19,12 +19,21 @@ require_once('common.security.php');
 require_once('common.mapping.php');
 require_once('common.javascript.php');
 
+define('WEB_DOMAIN', $_SERVER["HTTP_HOST"]);
 define("SERVER_ROOT", substr(__DIR__, 0, -17));
 define("FRAMEWORK_ROOT", SERVER_ROOT . '/framework');
 define("DEFAULT_MODULE", 'global');
 define("DEFAULT_ACTION", 'default');
 
 include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
+
+require_once(SERVER_ROOT . '/etc/config.php');
+
+$inhttps = ((key_exists('HTTPS', $_SERVER)) ?  $_SERVER["HTTPS"] == 'on' : false);
+
+$protocol = (SSL == 1 || $inhttps) ? 'https' : 'http';
+
+define('SERVER_URL' , $protocol . '://' . WEB_DOMAIN . WEB_SUBFOLDER);
 
 
 spl_autoload_register(function ($class) {
@@ -66,7 +75,6 @@ $display_headers = true;
 $include_module = DEFAULT_MODULE;
 $include_action = DEFAULT_ACTION;
 
-//$action_def = (object) array('page' => 'default','acl' => 'anyone','context' => 'page');
 $action_def = new GFCommonMapping();
 
 

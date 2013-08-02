@@ -6,6 +6,8 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
+$timestart=microtime(true);
+
 // Initialisation
 include 'global/init.php';
 include 'mapping.php';

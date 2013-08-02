@@ -4,6 +4,8 @@
  * Dice Roll by Ludovic Magerand  *
  **********************************/
 
+namespace api\tools;
+
 class Dice {
 
 	const DefaultFaces = 6;

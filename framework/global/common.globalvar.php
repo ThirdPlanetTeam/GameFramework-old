@@ -20,3 +20,6 @@ global $action_def;
 global $auto_global_menu;
 global $auto_sub_menu;
 global $auto_full_menu;
+
+global $timestart;
+global $timeend;

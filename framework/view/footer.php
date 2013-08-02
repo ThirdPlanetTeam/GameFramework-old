@@ -6,6 +6,9 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
+echo Widgets::AdminBar();
+
+
 GFCommonJavascript::renderJavascript(); ?>
 		</div>
     </body>

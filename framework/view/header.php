@@ -10,6 +10,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <base href="<?php echo SERVER_URL; ?>">
         <title><?php echo $i18n->getText('site','sitename');  if(isset($pagename)) { echo $i18n->getText('site',$pagename);  } ?></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
@@ -33,3 +34,7 @@
     <body>
 
     <div class="container">
+
+<?php
+
+echo Widgets::Breadcrumbs($query_module, $query_action);

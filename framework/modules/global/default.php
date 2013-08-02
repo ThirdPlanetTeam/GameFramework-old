@@ -6,10 +6,10 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-include FRAMEWORK_ROOT . '/modules/global/menu.php';
+//include FRAMEWORK_ROOT . '/modules/global/menu.php';
 
 include FRAMEWORK_ROOT . '/view/index.php';
 
-generateAutoMenu();
+Widgets::generateAutoMenu();
 
-printFullMenu($auto_full_menu);
+Widgets::printFullMenu(Widgets::$auto_full_menu);

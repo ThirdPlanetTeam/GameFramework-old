@@ -22,6 +22,8 @@ class AccountModel extends Modeles {
 
 		$result = $this->select('SELECT * FROM ' . AccountModel::TABLE_NAME . ' WHERE ' . AccountModel::FIELD_USERNAME . " LIKE $usr", true);
 
+		Modeles::$nb_query++;
+
 		return $result;
 	}
 
@@ -31,11 +33,15 @@ class AccountModel extends Modeles {
 
 		$result = $this->select('SELECT * FROM ' . AccountModel::TABLE_NAME . ' WHERE ' . AccountModel::FIELD_USERNAME . " LIKE $usr OR " . AccountModel::FIELD_EMAIL . " LIKE $mail");
 
+		Modeles::$nb_query++;
+
 		return $result;		
 	}
 
 	public function validateUser($username) {
 		$usr = $this->pdo->quote($username, PDO::PARAM_STR);
+
+		Modeles::$nb_query++;
 
 		$this->pdo->exec("UPDATE " . AccountModel::TABLE_NAME . " SET ".AccountModel::FIELD_VALIDATION." = NULL WHERE ".AccountModel::FIELD_USERNAME." LIKE $usr LIMIT 1");
 	}
@@ -58,6 +64,8 @@ class AccountModel extends Modeles {
 		$stat->bindParam(':salt', $salt, PDO::PARAM_STR);
 		$stat->bindParam(':email', $email, PDO::PARAM_STR);
 		$stat->bindParam(':validation', $validation, PDO::PARAM_STR);
+
+		Modeles::$nb_query++;
 
 		$stat->execute();
 	}
