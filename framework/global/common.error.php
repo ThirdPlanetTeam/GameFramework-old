@@ -9,6 +9,7 @@
 class GFException extends Exception {
 	public $redirectModule = DEFAULT_MODULE;
 	public $redirectAction = DEFAULT_ACTION;
+	public $message = '';
 
 }
 
@@ -20,9 +21,13 @@ class GFExceptionMajor extends GFException {
 	
 }
 
-function exception_handler($e)
+class GFExceptionBanned extends GFExceptionMajor {
+
+}
+
+/*function exception_handler($e)
 {
     echo 'Unknown error';
 }
  
-set_exception_handler('exception_handler');
+set_exception_handler('exception_handler');*/

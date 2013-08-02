@@ -56,6 +56,9 @@ if ($account_form->is_valid($_POST)) {
 		   	}
 
 		    if($hash == $user[$model::FIELD_HASH]) {
+
+		    	$security->loginOk();
+
 		    	GFCommonAuth::registerUser($username);
 
 			    if($source_module != 'account' || ($source_module == 'account' && $source_action != 'login' && $source_action != 'logout')) {
@@ -71,6 +74,8 @@ if ($account_form->is_valid($_POST)) {
 	    } else {
 	    	$account_errors[] = 'bad username';
 	    }
+
+	    $security->loginFailed();
 }
 
 $page_title = 'login title';

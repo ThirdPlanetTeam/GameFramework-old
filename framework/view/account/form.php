@@ -14,18 +14,18 @@
 
 	if (!empty($account_errors)) {
 	 
-	    echo '<ul>'."\n";
+	    //echo '<ul>'."\n";
 	     
 	    foreach($account_errors as $e) {
-	     
+	     	echo '  <div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button>';
 	     	if(is_array($e)) {
-	     		echo '  <li>'.$i18n->getText('account error',$e['id'], $e['params']).'</li>'."\n";
+	     		echo $i18n->getText('account error',$e['id'], $e['params']).'</div>'."\n";
 	     	} else {
-	        	echo '  <li>'.$i18n->getText('account error',$e).'</li>'."\n";
+	        	echo $i18n->getText('account error',$e).'</div>'."\n";
 	        }
 	    }
 	     
-	    echo '</ul>';
+	    //echo '</ul>';
 	}
 
 	echo $account_form;

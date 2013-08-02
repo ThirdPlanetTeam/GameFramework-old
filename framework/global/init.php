@@ -40,10 +40,6 @@ spl_autoload_register(function ($class) {
         include($api);
         return;
 	}	
-
-	var_dump($framework);
-	var_dump($api);
-	exit;
 });
 
 
@@ -53,6 +49,8 @@ $lang = i18n::getLangCode();
 
 
 $i18n = new i18n($lang);
+
+$security = new GFCommonSecurity();
 
 // declare empty array / variable for avoiding php warning
 $moduleMapping = array();

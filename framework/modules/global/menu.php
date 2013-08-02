@@ -6,35 +6,39 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-$global_menu = [];
-$sub_menu = [];
-$full_menu = [];
+$auto_global_menu = [];
+$auto_sub_menu = [];
+$auto_full_menu = [];
 
-if(isset($_SESSION['token'])) {
+/*if(isset($_SESSION['token'])) {
 	echo "Bienvenue " . $_SESSION['token']['username'];
-}
+}*/
 
-foreach($globalMapping as $module_name => $module) {
-	include FRAMEWORK_ROOT . '/modules/' . $module . '/mapping.php';
+function generateAutoMenu() {
+	include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
 
-	$full_menu[$module_name] = [];
-	$global_menu[] = $module_name;
+	foreach($globalMapping as $module_name => $module) {
+		include FRAMEWORK_ROOT . '/modules/' . $module . '/mapping.php';
 
-	foreach ($moduleMapping[$module] as $action_name => $action) {
+		$auto_full_menu[$module_name] = [];
+		$auto_global_menu[] = $module_name;
 
-		$aclOk = GFCommonAuth::checkAcl($action->acl, true);
+		foreach ($moduleMapping[$module] as $action_name => $action) {
 
-		if(!is_int($action->inMenu)) {
-			if($action->acl == GFCommonAuth::Registered) {
-				$aclOk = true;
+			$aclOk = GFCommonAuth::checkAcl($action->acl, true);
+
+			if(!is_int($action->inMenu)) {
+				if($action->acl == GFCommonAuth::Registered) {
+					$aclOk = true;
+				}
+			}
+
+			if($action->inMenu != false && $aclOk) {
+				$auto_sub_menu[$action_name] = $action->inMenu;
+				$auto_full_menu[$module_name][$action_name] = $action->inMenu;
 			}
 		}
-
-		if($action->inMenu != false && $aclOk) {
-			$sub_menu[$action_name] = $action->inMenu;
-			$full_menu[$module_name][$action_name] = $action->inMenu;
-		}
-	}
+	}	
 }
 
 function printFullMenu(Array $menu) {
@@ -45,7 +49,7 @@ function printFullMenu(Array $menu) {
 
 	echo '<div id="menu" class="navbar navbar-static">
 	<a class="navbar-brand" href="#">Menu</a>
-	<div class="nav-collapse collapse bs-js-navbar-collapse">
+	
 	<ul class="nav navbar-nav" role="navigation">';
 
 
@@ -61,5 +65,5 @@ function printFullMenu(Array $menu) {
 			echo '</ul></li>';
 		}
 	}
-	echo '</ul></div></div>';
+	echo '</ul></div>';
 }

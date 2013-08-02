@@ -64,7 +64,12 @@ function loadAction($query_module, $query_action) {
         include FRAMEWORK_ROOT . '/modules/' . $e->redirectModule . '/mapping.php';    
         include FRAMEWORK_ROOT . '/modules/' . $e->redirectModule . '/' . $e->redirectAction . '.php'; 
     } catch(GFExceptionMajor $e) {
-        // Major error
+        include FRAMEWORK_ROOT . '/modules/' . MODULE_ERROR . '/mapping.php';    
+        include FRAMEWORK_ROOT . '/modules/' . MODULE_ERROR . '/' . ACTION_ERROR . '.php'; 
+    } catch(Exception $e) {
+        // All the other exception
+        include FRAMEWORK_ROOT . '/modules/' . MODULE_ERROR . '/mapping.php';    
+        include FRAMEWORK_ROOT . '/modules/' . MODULE_ERROR . '/' . ACTION_ERROR . '.php';         
     }
 
     $content = ob_get_clean();
@@ -82,7 +87,7 @@ function loadAction($query_module, $query_action) {
     if($action_def->context == 'page') {
         include 'view/footer.php';
     } else {
-        //echo GFCommonJavascript::renderAjax();
+        echo GFCommonJavascript::renderAjax();
     }   
 
 }

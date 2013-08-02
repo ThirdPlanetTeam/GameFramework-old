@@ -10,6 +10,9 @@ define("MODULE_ACCOUNT", "account");
 define("ACTION_LOGIN", "login");
 define("ACTION_LOGOUT", "logout");
 
+define("MODULE_ERROR", "global");
+define("ACTION_ERROR", "error");
+
 class GFCommonAuth {
 
 	const Unregistered = -1; // Need to be unregistered
@@ -20,8 +23,19 @@ class GFCommonAuth {
 	const BrowserSalt = 'b9704fe8c16809f48ccedb818654e41e';
 
 
-
 	public static function checkAcl($acl, $safe = false) {
+
+
+		global $security;
+
+
+		if(!$security->canLogin() && !$safe) {
+			$e = new GFExceptionMajor("IP banned", 1);
+			//$e->redirectModule = MODULE_ERROR;
+			//$e->redirectAction = ACTION_ERROR;
+			throw $e;			
+		}
+
 		if($acl == GFCommonAuth::Anyone) {
 			return true;
 			// No Auth needed
@@ -56,7 +70,8 @@ class GFCommonAuth {
 		if($acl >= GFCommonAuth::Admin && $_SESSION['token']['admin'] == false) {
 			if($safe) {
 				return false;
-			} else {			
+			} else {	
+				$security->unauthorizedPlace();
 				throw new GFExceptionMajor("Unauthorised query", 1);	
 			}	
 		}

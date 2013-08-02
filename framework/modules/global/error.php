@@ -6,10 +6,8 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-include FRAMEWORK_ROOT . '/modules/global/menu.php';
+$error_code = $e->message;
+
+$error = $i18n->getText('site error', $error_code);
 
 include FRAMEWORK_ROOT . '/view/index.php';
-
-generateAutoMenu();
-
-printFullMenu($auto_full_menu);
