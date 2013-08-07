@@ -17,6 +17,7 @@ class Form {
 	protected $htmlclass;
 	protected $attrs;
 	protected $uniqid;
+	public $expiration_time = 60;
 
 	protected static $instances = array();
 
@@ -49,8 +50,22 @@ class Form {
 	}
 
 	public function is_valid(array $values) {
-
 		if ($this->is_submited()) {
+
+			if(!$_SESSION['form'][$this->uniqid]) {
+				trigger_error("Le formulaire à expiré", E_USER_WARNING);
+				return false;
+			}
+
+			$now = new DateTime('NOW');
+			$timestamp = $_SESSION['form'][$this->uniqid];
+			$timestamp->add(new DateInterval("PT".$this->expiration_time."M"));
+
+			if($timestamp < $now) {
+				trigger_error("Le formulaire à expiré", E_USER_WARNING);
+				return false;
+			}			
+
 
 			$valid = true;
 
@@ -70,7 +85,10 @@ class Form {
 				}
 			}
 			return $valid;
+		} else {
+			$_SESSION['form'][$this->uniqid] = new DateTime('NOW');
 		}
+
 		return false;
 	}
 
@@ -275,6 +293,10 @@ class Form {
 	}
 
 	public function __toString() {
+
+		if(!$_SESSION['form'][$this->uniqid]) {
+			trigger_error("Le formulaire à expiré", E_USER_WARNING);
+		}
 
 		$tab = func_num_args() > 0 ? func_get_arg(0) : '';
 

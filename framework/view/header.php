@@ -37,4 +37,4 @@
 
 <?php
 
-echo Widgets::Breadcrumbs($query_module, $query_action);
+echo UI::Breadcrumbs($query_module, $query_action);

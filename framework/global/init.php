@@ -31,9 +31,9 @@ require_once(SERVER_ROOT . '/etc/config.php');
 
 $inhttps = ((key_exists('HTTPS', $_SERVER)) ?  $_SERVER["HTTPS"] == 'on' : false);
 
-$protocol = (SSL == 1 || $inhttps) ? 'https' : 'http';
+$protocol = (SSL == true || $inhttps) ? 'https' : 'http';
 
-define('SERVER_URL' , $protocol . '://' . WEB_DOMAIN . WEB_SUBFOLDER);
+define('SERVER_URL' , $protocol . '://' . WEB_DOMAIN . WEB_SUBFOLDER . '/');
 
 
 spl_autoload_register(function ($class) {

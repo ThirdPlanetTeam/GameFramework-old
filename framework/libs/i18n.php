@@ -47,6 +47,16 @@ class i18n {
 		$this->lang_array = parse_ini_file(LANG_DIR . $this->lang . '.ini', true);	
 
 	}
+
+	public function loadSpecialLangFile($path) {
+		if(file_exists(LANG_DIR . $path . '/' . $this->lang . '.ini')) {
+			$this->lang_array = parse_ini_file(LANG_DIR  . $path . '/' . $this->lang . '.ini', true);	
+		} else {
+			$this->lang_array = parse_ini_file(LANG_DIR  . $path . '/' . LANG_FALLBACK . '.ini', true);
+		}
+
+		return $this;
+	}
 	
 	public function selectLang($lang) {
 	

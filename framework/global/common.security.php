@@ -7,7 +7,7 @@
  **********************************/
 
 /*******
- * This code come from Sebastien Sauvage 
+ * Part of this code come from Sebastien Sauvage 
  * Sources here : http://sebsauvage.net/paste/?36dbd6c6be607e0c#M5uR8ixXo5rXBpXx32gOATLraHPffhBJEeqiDl1dMhs
  * http://sebsauvage.net/links/?kO4Krg
  *******/
@@ -60,6 +60,55 @@ class GFCommonSecurity {
     	return SERVER_ROOT . '/' . GFCommonSecurity::DataDir;
     }
 
+    public static function refreshPermissions($userid, $force=false) {
+
+        if(isset($_SESSION['permschecked'][$userid]) && !$force) {
+            // No refresh needed
+            return;
+        }
+
+        $perms = Modeles::getModel('account', 'permissions');
+
+        $liste_perms = $perms->getPermissions($userid);
+
+        unset($_SESSION['token']['admin']);
+        unset($_SESSION['token']['perms']);
+
+        if(is_array($liste_perms)) {
+
+            foreach ($liste_perms as $line) {
+
+                if($line[PermissionsModel::PERM_FIELD] != null) {
+                    $key = $line[PermissionsModel::PERM_FIELD];
+
+                    $_SESSION['token']['perms'][$key] = true;
+
+                    if($key == 'ADMIN') {
+                        $_SESSION['token']['admin'] = true;
+                    }
+                }
+
+                $isadmin = $line[PermissionsModel::ADMIN_FIELD];
+
+                if($isadmin != null && $isadmin == true) {
+                     $_SESSION['token']['admin'] = true;
+                }
+            }
+
+
+            $_SESSION['permschecked'][$userid] = true;
+        }
+    }
+
+    public static function getBrowserInfo() {
+        $browser = [];
+
+        $browser['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
+        $browser['lang'] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $browser['encoding'] = $_SERVER['HTTP_ACCEPT_ENCODING'];
+
+        return $browser;        
+    }
 
     // ------------------------------------------------------------------------------------------
     // Brute force protection system
@@ -149,7 +198,7 @@ class GFCommonSecurity {
     }    
 
 
-    private function Log($message)
+    public function Log($message)
     {
         $t = strval(date('Y/m/d_H:i:s')).' - '.$_SERVER["REMOTE_ADDR"].' - '.strval($message)."\n";
         file_put_contents(GFCommonSecurity::getDir().'/log.txt',$t,FILE_APPEND);

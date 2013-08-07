@@ -9,7 +9,7 @@
 class Modeles {
     public $pdo;
 
-    public static $nb_query = 0;
+    public static $nb_query = array();
 
     public function __construct() {
         $this->pdo = PDOConnector::getInstance();
@@ -20,9 +20,14 @@ class Modeles {
     }
 
     public static function getModel($package, $name) {
-    	$classname = ucfirst($name).'Model';
-    	include FRAMEWORK_ROOT.'/modeles/'.$package.'/'.$name.'.php';
+        $classname = self::loadModel($package, $name);
     	return new $classname();
+    }
+
+    public static function loadModel($package, $name) {
+        $classname = ucfirst($name).'Model';
+        include_once FRAMEWORK_ROOT.'/modeles/'.$package.'/'.$name.'.php';   
+        return $classname;     
     }
 
     public function select($query, $firstline = false) {
@@ -35,6 +40,8 @@ class Modeles {
         }
 
         $result->closeCursor();
+
+        Modeles::$nb_query[] = $query;
 
         return $lines;
     }

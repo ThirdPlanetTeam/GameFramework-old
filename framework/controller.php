@@ -56,7 +56,7 @@ function loadAction($query_module, $query_action) {
             }
         }
 
-        GFCommonAuth::checkAcl($action_def->acl);
+        GFCommonAuth::checkAcl($action_def->acl, $action_def->perms);
 
 
         include FRAMEWORK_ROOT . '/modules/' . $include_module . '/' . $include_action . '.php';  
@@ -106,6 +106,8 @@ if(isset($_GET['action']))
 {
     $act = $_GET['action'];
 }
+
+GFCommonAuth::autologin();
 
 loadAction($mod, $act);
 

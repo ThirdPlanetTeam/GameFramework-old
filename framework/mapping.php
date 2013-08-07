@@ -7,6 +7,7 @@
  **********************************/
 
 $globalMapping = array(
-	'global' => 'global',
-	'account' => 'account'
-	);
+	'account' => 'account',
+	'admin' => 'admin',
+	'global' => 'global'	
+);

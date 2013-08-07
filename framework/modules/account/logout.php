@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-GFCommonAuth::unregisterUser();
+GFCommonAuth::unregisterToken();
 
 session_destroy();
 session_start();

@@ -10,6 +10,6 @@
 
 include FRAMEWORK_ROOT . '/view/index.php';
 
-Widgets::generateAutoMenu();
+UI::generateAutoMenu();
 
-Widgets::printFullMenu(Widgets::$auto_full_menu);
+UI::printFullMenu(UI::$auto_full_menu);

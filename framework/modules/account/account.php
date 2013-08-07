@@ -6,4 +6,6 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-echo $_SESSION['token']['username'];
+print_r($_SESSION['token']);
+
+//echo $_SESSION['token']['username'];

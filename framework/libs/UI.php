@@ -6,7 +6,7 @@
  * Copyright (c) 2013 Léo Maradan *
  **********************************/
 
-class Widgets {
+class UI {
 
 	public static $auto_global_menu = [];
 	public static $auto_sub_menu = [];
@@ -66,7 +66,7 @@ class Widgets {
 
 			foreach ($moduleMapping[$module] as $action_name => $action) {
 
-				$aclOk = GFCommonAuth::checkAcl($action->acl, true);
+				$aclOk = GFCommonAuth::checkAcl($action->acl, $action->perms, true);
 
 				if(!is_int($action->inMenu)) {
 					if($action->acl == GFCommonAuth::Registered) {
@@ -106,18 +106,47 @@ class Widgets {
 
 	public static function AdminBar() {
 
-		include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
+		if(GFCommonAuth::checkAcl(GFCommonAuth::PermsCode, 'ADMIN', true)) {
 
-		$timeend=microtime(true);
-		$time=$timeend-$timestart;	
+			include(FRAMEWORK_ROOT . '/global/common.globalvar.php');
 
-		echo '<div class="navbar navbar-fixed-bottom navbar-inverse">
-			<a href="#" class="navbar-brand">Admin Bar</a>
-			<ul class="nav navbar-nav">
-				<li><a href="#">Execution time: '.$time.'</a></li>
-				<li><a href="#">Number of query: '.Modeles::$nb_query.'</a></li>
-			</ul>
-		</div>';		
+			$timeend=microtime(true);
+			$time=$timeend-$timestart;	
+
+			if(count(Modeles::$nb_query) > 0) {
+				$queries = '<a href="#" data-toggle="dropdown" class="dropdown-toggle" id="admin-query">Number of query: '.count(Modeles::$nb_query).'</a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="admin-query">';
+				foreach (Modeles::$nb_query as $query) {
+					$queries .= "<li><a href=''>".$query."</a></li>" . PHP_EOL;
+				}
+				$queries .= '</ul>';
+			} else {
+				$queries = '<a href="">Number of query: 0</a>';
+			}
+			
+
+			echo '<div class="navbar navbar-fixed-bottom navbar-inverse">
+				<a href="" class="navbar-brand">Admin Bar</a>
+				<ul class="nav navbar-nav">
+					<li><a href="">Execution time: '.$time.'</a></li>
+					<li>'.$queries.'</li>
+				</ul>
+			</div>';		
+		}
+
+	}
+
+	public static function DebugPrint($data) {
+		
+		
+		echo '<div class="alert alert-info debug">';
+		if(is_array($data)) {
+			print_r($data);
+		} else {
+			var_dump($data);
+		}
+		
+		echo '</div>';
 	}
  
 }

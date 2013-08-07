@@ -40,7 +40,7 @@ if ($account_form->is_valid($_POST)) {
 
 	    list($username, $validation, $source_module, $source_action) = $list;
 
-	    $user = $model->getUserInfo($username);
+	    $user = $model->getUserInfoByUsername($username);
 
 	    if($user != false) {
 

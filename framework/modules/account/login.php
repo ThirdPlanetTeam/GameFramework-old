@@ -20,6 +20,10 @@ $account_form->add('Password', 'password')
          ->label($i18n->getText('account','password'))
          ->jscrypt('sha1', GFCommonAuth::BrowserSalt); 
 
+$account_form->add('Checkbox', 'autologin')
+               ->label($i18n->getText('account','autologin'))
+               ->required(false);       
+
 $account_form->add('Hidden', 'source_module')
 		 ->value($query_module);  
 
@@ -33,14 +37,14 @@ $account_form->bound($_POST);
 $account_errors = array();
 
 if ($account_form->is_valid($_POST)) {
-	    $list = $account_form->get_cleaned_data('username', 'password', 'source_module', 'source_action');
+	    $list = $account_form->get_cleaned_data('username', 'password', 'source_module', 'source_action', 'autologin');
 
 	    $model = Modeles::getModel('account', 'account');
 
 
-	    list($username, $password, $source_module, $source_action) = $list;
+	    list($username, $password, $source_module, $source_action, $autologin) = $list;
 
-	    $user = $model->getUserInfo($username);
+	    $user = $model->getUserInfoByUsername($username);
 
 	    if($user != false) {
 		    $salt = $user[$model::FIELD_SALT];
@@ -59,12 +63,18 @@ if ($account_form->is_valid($_POST)) {
 
 		    	$security->loginOk();
 
-		    	GFCommonAuth::registerUser($username);
+		    	GFCommonAuth::registerToken($user[$model::FIELD_ID]);
+
+		    	if($autologin) {
+		    		GFCommonAuth::generateCookie($user[$model::FIELD_ID]);
+		    	}
+
+   	
 
 			    if($source_module != 'account' || ($source_module == 'account' && $source_action != 'login' && $source_action != 'logout')) {
-			    	header("Location: ".GFCommon::formatLink($source_module, $source_action, null, true));
+			    	//header("Location: ".GFCommon::formatLink($source_module, $source_action, null, true));
 			    } else {
-			    	header("Location: ".SERVER_URL);
+			    	//header("Location: ".SERVER_URL);
 			    }
 
 		    } else {
