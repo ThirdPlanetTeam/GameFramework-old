@@ -3,7 +3,7 @@
 /**********************************
  * PHP Game Framework             *
  * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
+ * Copyright (c) 2013-2014 Third Planet Team *
  **********************************/
 
 session_start();
@@ -16,8 +16,11 @@ require_once('common.php');
 require_once('common.auth.php');
 require_once('common.error.php');
 require_once('common.security.php');
+require_once('common.log.php');
 require_once('common.mapping.php');
 require_once('common.javascript.php');
+
+require_once('constant.php');
 
 define('WEB_DOMAIN', $_SERVER["HTTP_HOST"]);
 define("SERVER_ROOT", substr(__DIR__, 0, -17));
@@ -52,12 +55,11 @@ spl_autoload_register(function ($class) {
 });
 
 
-
-
 $lang = i18n::getLangCode();
 
-
 $i18n = new i18n($lang);
+
+$log = new GFCommonLog();
 
 $security = new GFCommonSecurity();
 
@@ -65,6 +67,11 @@ $security = new GFCommonSecurity();
 $moduleMapping = array();
 $globalMapping = array();
 $headers = array();
+
+
+// Injection des dépendances dans les modules externes
+$i18n->logInstance = $log;
+PDOConnector::$log = $log;
 
 // Initialize js and css bases
 GFCommonJavascript::addScript('main');

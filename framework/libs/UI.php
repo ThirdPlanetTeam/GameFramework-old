@@ -3,7 +3,7 @@
 /**********************************
  * PHP Game Framework             *
  * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
+ * Copyright (c) 2013-2014 Third Planet Team *
  **********************************/
 
 class UI {
@@ -147,6 +147,12 @@ class UI {
 		}
 		
 		echo '</div>';
+	}
+
+	public static function DataURI($file, $mime) {
+		  $contents=file_get_contents($file);
+		  $base64=base64_encode($contents);
+		  echo "data:$mime;base64,$base64";
 	}
  
 }

@@ -8,6 +8,8 @@
 class PDOConnector extends PDO {
  
     private static $_instance;
+
+    public static $log = null;
  
     /* Constructeur : héritage public obligatoire par héritage de PDO */
     public function __construct( ) {
@@ -26,6 +28,7 @@ class PDOConnector extends PDO {
              
             } catch (PDOException $e) {
              
+                self::sendLog($e);
                 //echo $e;
                 echo "Database error";
                 die();
@@ -34,4 +37,11 @@ class PDOConnector extends PDO {
         return self::$_instance;
     }
     // End of PDOConnector::getInstance() */
+
+    private static function sendLog($message) {
+        if(self::$log != null) {
+            $log = self::$log;
+            $log('PDOConnector: ' . $message);
+        }        
+    }
 }

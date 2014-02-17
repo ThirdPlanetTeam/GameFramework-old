@@ -3,7 +3,7 @@
 /**********************************
  * PHP Game Framework             *
  * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
+ * Copyright (c) 2013-2014 Third Planet Team *
  **********************************/
 
 class GFCommonJavascript {
@@ -85,7 +85,12 @@ class GFCommonJavascript {
         echo PHP_EOL . '});'. PHP_EOL .'</script>' . PHP_EOL;
 
 
-    }    
+    }  
+
+    // Converti un array php en json
+    public static function renderJsonArray() {
+
+    } 
 
     public static function renderAjax() {
 

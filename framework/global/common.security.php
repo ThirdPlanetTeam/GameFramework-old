@@ -3,7 +3,7 @@
 /**********************************
  * PHP Game Framework             *
  * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
+ * Copyright (c) 2013-2014 Third Planet Team *
  **********************************/
 
 /*******
@@ -15,7 +15,7 @@
 
 class GFCommonSecurity {
 
-	const DataDir = 'tmp';
+	const DataDir = 'log';
 	const Filename = 'ipbans.php';
 	const DefaultBanAfter = 5;
 	const DefaultBanDuration = 1800;
@@ -201,7 +201,7 @@ class GFCommonSecurity {
     public function Log($message)
     {
         $t = strval(date('Y/m/d_H:i:s')).' - '.$_SERVER["REMOTE_ADDR"].' - '.strval($message)."\n";
-        file_put_contents(GFCommonSecurity::getDir().'/log.txt',$t,FILE_APPEND);
+        file_put_contents(GFCommonSecurity::getDir().'/security.txt',$t,FILE_APPEND);
     }    
 
     private function WriteBanFile($content) {

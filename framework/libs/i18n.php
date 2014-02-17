@@ -3,7 +3,7 @@
 /**********************************
  * PHP Game Framework             *
  * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
+ * Copyright (c) 2013-2014 Third Planet Team *
  **********************************/
 
 define('LANG_DIR', SERVER_ROOT . '/etc/i18n/');
@@ -14,14 +14,23 @@ class i18n {
 	private $lang;
 	private $lang_array;
 
-	public static function getLangCode() {
+	public $logInstance = null;
+
+	public static function getLangCodegetLangCode() {
 		//fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4
-		$array = preg_split('/,/i', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
 		$lang = array();
-		
-		foreach($array as $item) {
-			$q = preg_split('/;/i', $item);
-			$lang[] = $q[0];
+
+		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+			$array = preg_split('/,/i', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+			
+			
+			foreach($array as $item) {
+				$q = preg_split('/;/i', $item);
+				$lang[] = $q[0];
+			}
+		} else {
+			$lang[] = LANG_FALLBACK;
 		}
 		
 		return $lang;
@@ -93,12 +102,20 @@ class i18n {
 			
 			return $text;
 		} else {
+			$this->log('No translation found in ' . $this->lang . ': ' . $cat.'-'.$id);
 			return $cat.'-'.$id;
 		}
 	}
 
 	public static function wrapVar($var) {
 		return '/{' . $var . '}/';
+	}
+
+	private function log($message) {
+		if($this->logInstance !== null) {
+			$log = $this->logInstance;
+			$log('i18n: ' . $message);
+		}
 	}
 	
 }

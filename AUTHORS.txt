@@ -6,6 +6,8 @@ Léo Maradan
 
 Indirect contribution:
 ---------------------
-Julian Espérat (Savageman)
-Ludovic Magerand
-Sébastien Sauvage (Sebsauvage)
+Ain Tohvri ("tail" equivalent in php)
+Frédéric Hardy (Unit Test framework)
+Julian Espérat "Savageman" (Form manager)
+Ludovic Magerand (Dice function)
+Sébastien Sauvage "Sebsauvage" (IP Ban / anti-bruteforce)
