@@ -1,12 +1,12 @@
 <?php
 
-/**********************************
- * PHP Game Framework             *
- * Published under MIT License    *
- * Copyright (c) 2013 Léo Maradan *
- * This code went from EWO 		  *
- * http://ewo-le-monde.com 		  *
- **********************************/
+/*********************************************
+ * PHP Game Framework            			 *
+ * Published under MIT License   			 *
+ * Copyright (c) 2013-2014 Third Planet Team *
+ * This code went from EWO					 *
+ * http://ewo-le-monde.com 					 *
+ *********************************************/
 
 namespace api\tools;
 
